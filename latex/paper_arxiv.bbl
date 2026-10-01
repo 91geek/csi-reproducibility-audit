@@ -1,0 +1,61 @@
+\begin{thebibliography}{99}
+
+\bibitem{zheng2019widar} Y. Zheng \etal, ``WiFi CSI-based human activity recognition via body-coordinate velocity profiles,'' \emph{IEEE TPAMI}, 2019.
+
+\bibitem{wang2022csi} Z. Wang \etal, ``A survey on CSI-based human sensing,'' \emph{IEEEXplore}, 2022.
+
+\bibitem{sheng2020} T. Sheng \etal, ``Domain adversarial training for WiFi-CSI gesture recognition,'' \emph{IEEE INFOCOM}, 2020.
+
+\bibitem{zhang2021} J. Zhang \etal, ``AttnSense: Multi-head attention for CSI gesture recognition,'' \emph{IEEE TMC}, 2021.
+
+\bibitem{ma2022} Y. Ma \etal, ``Self-supervised pretraining for WiFi sensing,'' \emph{IEEE IoT-J}, 2022.
+
+\bibitem{xie2023} Q. Xie \etal, ``Multimodal CSI fusion for gesture recognition,'' \emph{IEEE TMC}, 2023.
+
+\bibitem{sculley2018} D. Sculley \etal, ``Winner's curse? On pace, progress, and empirical rigor,'' \emph{ICLR Workshop}, 2018.
+
+\bibitem{pineau2021} J. Pineau \etal, ``Improving reproducibility in machine learning research,'' \emph{JMLR}, 2021.
+
+\bibitem{henderson2018} P. Henderson \etal, ``Deep reinforcement learning that matters,'' \emph{AAAI}, 2018.
+
+\bibitem{colas2018} F. Colas \etal, ``A pitfall of experimental design in deep RL,'' \emph{ICML Workshop}, 2018.
+
+\bibitem{dror2018} R. Dror \etal, ``The hitchhiker's guide to testing statistical significance in natural language processing,'' \emph{ACL}, 2018.
+
+\bibitem{bouthillier2021} X. Bouthillier \etal, ``Accounting for variance in machine learning benchmarks,'' \emph{MLSys}, 2021.
+
+\bibitem{zhang2026sdp} D. Zhang \etal, ``SDP: A unified protocol and benchmarking framework for reproducible wireless sensing,'' arXiv:2601.08463, 2026.
+
+\bibitem{guarino2026} I. Guarino \etal, ``A survey on CSI-based Wi-Fi sensing datasets and models with a focus on reproducibility,'' \emph{Computer Communications}, 249:108431, 2026.
+
+\bibitem{wang2026survey} F. Wang \etal, ``A survey on Wi-Fi sensing generalizability: taxonomy, techniques, datasets, and future research prospects,'' \emph{IEEE COMST}, 28:5227--5266, 2026.
+
+\bibitem{woo2018cbam} S. Woo \etal, ``CBAM: Convolutional block attention module,'' \emph{ECCV}, 2018.
+
+\bibitem{he2016resnet} K. He \etal, ``Deep residual learning for image recognition,'' \emph{IEEE CVPR}, 2016.
+
+\bibitem{zhang2017rexart} C. Zhang \etal, ``Understanding deep learning requires rethinking generalization,'' \emph{ICLR}, 2017.
+
+\bibitem{arpit2017} D. Arpit \etal, ``A closer look at memorization in deep networks,'' \emph{ICML}, 2017.
+
+\bibitem{yang2023sensefi} J. Yang \etal, ``SenseFi: A library and benchmark on deep-learning-empowered WiFi human sensing,'' \emph{Patterns}, 4(3):100703, 2023.
+
+\bibitem{sterzinger2026datta} J. Strohmayer \etal, ``DATTA: Domain-adversarial test-time adaptation for cross-domain WiFi-based human activity recognition,'' \emph{WACV}, 2026.
+
+\bibitem{cohen2026ruview} R. Cohen, ``RuView: An open-source ESP32-mesh WiFi sensing stack,'' GitHub, 2026.
+
+\bibitem{zhu2025csibench} G. Zhu \etal, ``CSI-Bench: A large-scale in-the-wild dataset for multi-task WiFi sensing,'' \emph{NeurIPS Datasets \& Benchmarks}, 2025.
+
+\bibitem{wu2021} D. Wu \etal, ``WiTraj: Robust indoor motion tracking with WiFi signals,'' \emph{IEEE TMC}, 22(5):3062--3078, 2023.
+
+\bibitem{yang2023mmfi} J. Yang \etal, ``MMFi: Multi-modal WiFi sensing dataset,'' \emph{IEEE TMC}, 2023.
+
+\bibitem{vassallo2025time} A. Brunello \etal, ``Time matters: Empirical insights into the limits and challenges of temporal generalization in CSI-based Wi-Fi sensing,'' \emph{Internet of Things}, 32:101634, 2025.
+
+\bibitem{dasilva2026pss} R. da Silva and K. Monahan, ``Quantifying protocol-induced uncertainty in comparative predictive-model evaluation: evidence from large-scale daily PM10 forecasting,'' arXiv:2609.26288, 2026.
+
+\bibitem{li2026conformal} H. Li \etal, ``Solving the WiFi sensing dilemma in reality leveraging conformal prediction,'' \emph{IEEE TMC}, 2026.
+
+\bibitem{chen2026perceptalign} S. Jia \etal, ``Breaking coordinate overfitting: geometry-aware WiFi sensing for cross-layout 3D pose estimation,'' arXiv:2601.12252, 2026.
+
+\end{thebibliography}

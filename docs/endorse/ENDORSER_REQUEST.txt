@@ -1,0 +1,166 @@
+================================================================================
+Endorser Request Email Templates — arXiv First-Time Submission
+================================================================================
+
+背景：arXiv 第一次投某分类需要 endorser（已在该分类发过论文的同行）
+通过 endorser 的最简单方式：找一位 cs.LG 或 eess.SP 分类的同事/导师/合作者，
+请他们在自己邮箱点确认链接。整个过程不到 1 分钟。
+
+下面是 3 个版本，从最正式（给陌生教授）到最随意（给朋友）选一个用。
+
+================================================================================
+模板 1：给陌生教授/远端同行（最正式）
+================================================================================
+
+Subject: Brief endorser request for arXiv submission (cs.LG / eess.SP)
+
+Dear Professor [Last Name],
+
+I am writing to request a brief endorsement for my first arXiv submission.
+I am a [student/researcher at Your University/Institute], working on
+WiFi sensing reproducibility, and I am submitting our paper to arXiv
+under the cs.LG and eess.SP categories.
+
+The paper is titled "WiFi CSI Cross-Domain Gesture Recognition:
+A Reproducibility Audit and the Boundary of Multi-Rx Representation."
+It presents a paired multi-seed audit of 10 recent CSI gesture
+recognition methods, reports that all fail under paired evaluation
+(|Cohen's d| < 0.3), and identifies a representation-layer improvement
+(multi-Rx BVP) that does survive replication. We also provide a
+protocol-controlled replication of Liu et al. 2025's CBAM+ResNet18
+backbone under our protocol, showing the 97.61% cross-domain number
+does not survive paired evaluation.
+
+If you are willing to endorse this submission, the arXiv system will
+send you a brief confirmation link. It takes less than a minute. I have
+attached a 1-page summary below for your reference.
+
+Title: WiFi CSI Cross-Domain Gesture Recognition: A Reproducibility Audit and the Boundary of Multi-Rx Representation
+Length: 18 main text pages + 4 appendices
+Subjects: cs.LG (primary), eess.SP (cross-list)
+Contribution: First paired x multi-seed x LODO x MDE-aware audit of CSI gesture recognition; cross-dataset boundary finding; CBAM+ResNet18 protocol-gap replication.
+
+If you have any concerns or questions, please don't hesitate to contact me.
+
+Thank you very much for your time and consideration.
+
+Best regards,
+[Your Full Name]
+[Your Affiliation]
+[Your Email]
+[Your Phone (optional)]
+
+================================================================================
+模板 2：给熟悉的同事/合作者（半正式）
+================================================================================
+
+Subject: 帮我 endorse 一个 arXiv 投稿？
+
+Hi [First Name],
+
+我要投一篇 arXiv 但需要一位在 cs.LG 或 eess.SP 分类已经发过论文的人
+帮我做 endorser。流程是：arXiv 会给你发一封邮件，你点一下链接就 OK，
+整个过程不到 1 分钟。
+
+论文概要：
+- 题目：WiFi CSI Cross-Domain Gesture Recognition: A Reproducibility Audit
+- 主题：CSI 跨域手势识别的可复现性审计
+- 核心发现：10 个 SOTA 方法在 paired × multi-seed × LODO 协议下全部不显著；
+  multi-Rx 表示层突破 +8.14pp (d=1.71, 19/1 wins)；
+  反驳 Liu 2025 的 97.61% 在我们的协议下不可复现
+- 长度：18 页正文 + 4 附录
+- 投稿分类：cs.LG + eess.SP
+- 目标期刊：IEEE TMC（已写好投稿包）
+
+你介意帮我 endorse 一下吗？如方便，我把完整 PDF 给你过目。
+
+Thanks a lot!
+[Your Name]
+
+================================================================================
+模板 3：给导师 / 实验室同事（最随意）
+================================================================================
+
+Subject: arXiv endorser 帮我一下
+
+Hi [老板/同事 first name],
+
+我那篇 WiFi 跨域手势可复现性的论文要投 arXiv，first submission 需要
+一个 endorser。麻烦您收到 arXiv 邮件后点一下确认链接就行（如果您
+之前在 cs.LG/eess.SP 发过 arXiv）。
+
+论文摘要我贴在下面，主要贡献有 3 个：
+1. 第一次在 CSI 领域做 paired × multi-seed × LODO × MDE-aware audit
+2. 实证 Liu 2025 的 97.61% 在 paired 协议下不可复现（Δ=-4.50pp）
+3. 多 Rx 表示层突破 +8.14pp 是 representation-layer 的 win
+
+谢谢老板！
+
+[Your Name]
+
+P.S. 如果您没在 cs.LG/eess.SP 分类发过 arXiv，能不能给我推荐一位
+     认识的同事？比如 [具体合作者姓名]？
+
+================================================================================
+ENHANCEMENT：如果找不到 endorser，arXiv 有自动 endorser 系统
+================================================================================
+
+如果你**找不到任何 endorser**（所有人都不回复/不在分类里），arXiv 有备用
+机制：**自动 endorser 系统**。
+
+工作流程：
+1. 你在投稿界面填"没有 endorser"
+2. 系统把你的请求转给**该分类的活跃 contributor**（通常是编辑志愿者）
+4. 通常 24-72 小时内会有 endorser 通过
+5. 通过率：~80%（取决于分类热度，cs.LG 很高，eess.SP 中等）
+
+⚠️ 自动 endorser 不是 100% 保证的，**最好还是主动找熟人**。
+
+================================================================================
+ENDORSER LOOKUP：怎么找已经在 cs.LG / eess.SP 发过 arXiv 的人
+================================================================================
+
+快速查找方式（按可行性排序）：
+
+1. **你导师**：最稳，导师通常在 cs.LG/eess.SP 有 arXiv 历史
+2. **实验室同事 / 师兄师姐**：通常有 arXiv 投稿经验
+3. **同领域合作者**：之前在 ML/CV 会议/期刊发过论文的人
+4. **任何 CVPR/NeurIPS/ICML 论文的作者**：他们几乎一定在 cs.LG 有 arXiv
+   - 找一个跟你领域相关的最近论文，给第一作者/通讯作者发邮件
+   - 邮件开头引用他们的论文，体现你读过 → endorser 通过率更高
+
+5. **Twitter / 学术社交**：发条推 "Looking for arXiv endorser in cs.LG
+   or eess.SP. Please DM if you can help. Our paper is on WiFi CSI
+   reproducibility audit." → 经常有人愿意帮忙
+
+6. **arXiv 站内搜索**：用 arxiv.org 搜 "WiFi CSI" → 找近年相关论文的
+   作者 → 检查他们的 cs.LG/eess.SP 历史 → 邮件
+
+⚠️ 注意事项：
+- **不要一次给 20 个人发邮件**（会被视为 spam）
+- **每次邮件都要定制化**（提到对方的一篇具体论文）
+- **准备好 PDF 摘要**让人快速判断
+- **不要催**：等 3-5 个工作日，没人回就换下一个
+
+================================================================================
+ENDORSER CONFIRMATION PROCESS（接受 endorser 请求的人做什么）
+================================================================================
+
+你的 endorser 收到 arXiv 邮件后，需要：
+
+1. 打开 arXiv 系统发的邮件
+2. 点击 "Yes, I endorse this submission" 链接
+3. （可选）填一个简短的 endorsement statement：
+   "This submission appears to be a serious research paper on WiFi
+   CSI gesture recognition. The methodology is sound and the topic
+   is appropriate for cs.LG."
+4. 点确认
+
+整个过程 < 1 分钟。
+
+⚠️ endorser **不需要读过论文全文**，只需基于 title + abstract +
+subject 觉得"看起来合理" 即可。这是 arXiv 的设计。
+
+================================================================================
+END OF ENDORSER REQUEST
+================================================================================

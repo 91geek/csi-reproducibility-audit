@@ -1,0 +1,63 @@
+September 14, 2026 (revised October 1, 2026)
+
+Editor-in-Chief
+IEEE Transactions on Mobile Computing (TMC)
+
+Dear Editor,
+
+We are pleased to submit our manuscript entitled "WiFi CSI Cross-Domain Gesture Recognition: A Reproducibility Audit Revealing Dataset-Conditioned Optimality of the Multi-Rx Representation" for consideration as a regular paper in IEEE TMC. This manuscript extends our earlier arXiv pre-print (v9, Sep 29 2026) by adding (i) a closed-form Statistical Foundation (§3.5, Theorems 1--3 + Corollary 1) that converts the audit into a pre-registration exercise, (ii) a System Overhead table (§10.4) benchmarking inference latency for the five audited backbones on a CPU, and (iii) an explicit "30%-subset + segment-level audit" policy recommendation (§9.6) derived from the four-data-point generalization.
+
+SCOPE AND FIT
+
+The manuscript addresses cross-environment generalization of WiFi sensing --- a core topic in mobile and pervasive computing --- through a paired multi-seed reproducibility audit. TMC is the natural venue because (i)~WiFi sensing is a long-standing TMC topic (e.g., AttnSense TMC 2021, MMFi TMC 2023, WiTraj TMC 2021), (ii)~cross-environment robustness is a systems-level concern that goes beyond pure algorithmic novelty, and (iii)~methodology papers with rigorous paired evaluations have historically been well-received at TMC (e.g., the recent reproducibility-crisis line of work in adjacent venues).
+
+CONTRIBUTIONS (C1--C5)
+
+C1 (Methodology): A paired leave-one-domain-out × multi-seed × MDE-pre-registered reproducibility audit protocol. We provide closed-form statistical foundations (Section 3.5): Theorem 1 derives the paired sample-size bound n ≥ (z_{1-α/2} + z_{1-β})² σ²/ε²; Theorem 2 derives the MDE closed form; Theorem 3 states the Hedges' g small-sample correction; Corollary 1 combines the three into a three-criterion "real effect" test. Substituting our empirical σ_within ≈ 4.8 pp shows that single-seed reports of ≤ 2 pp gain are *provably underpowered* at any paired design with n ≤ 18 (n ≥ 56 required). The protocol, code, and all paired evaluations are released.
+
+C2 (Empirical Finding): Eleven paired comparisons across Widar3.0 (6 LODO folds × up to 5 seeds) and MMFi (4 environments × 5 seeds) re-evaluate ten method axes spanning algorithmic (DANN, Snapshot×3, Mixup, Reweighting, Pretrain), architectural (LeNet+MHA, ResNetSmall, CBAM+ResNet18 control), and representational (Widar-orig, Multi-scale, Multi-Rx, RMS-agg, Single-Rx) families. Seven of eleven comparisons fail the three-criterion audit (p > 0.28, |d| < 0.3, |Δ| < MDE). Variance decomposition shows within-seed σ ranges from 1.0 pp (RMS-agg) to 8.2 pp (Multi-Rx) — comparable to the largest reported effect, explaining why single-seed studies cannot distinguish real gains from noise.
+
+C3 (Mechanism): The BVP Multi-Rx expansion (retain A = 9 antennas as a tensor axis instead of collapsing via RMS-aggregation) yields +8.14 pp (Cohen's d = 1.71, g = 1.68) on Widar3.0. The gain is attributed to two factors: (i) the antenna participation ratio rises from 1.00 to 1.89, and (ii) the total Fisher information rises by 1.82× (~82%). We verify the mechanism three ways: eigenvalue effective rank, Fisher F per axis, and information density fold.
+
+C4 (Boundary & Honest Reanalysis): The +8.14 pp gain vanishes on MMFi — the dataset-optimal representation *flips* to Multi-scale (+1.20 pp, p = 0.016). t-SNE reveals the geometric root cause: MMFi's four environments are indistinguishable in BVP feature space, so there is no discriminative signal for Multi-Rx to amplify. We then perform a v1→v2 cache reanalysis: the v1 cache (1080 path-labeled samples) was a cache-construction artifact; the v2 segment-level cache (16,447 real action segments) shows the backbone comparison becoming statistically indistinguishable (Δ = -0.33 pp, p = 0.564). On the 50,000-sample Widar3.0 subset, the original 12k backbone comparison (CBAM+ResNet18 -4.61 pp, p = 0.028) *reverses* to +5.75 pp (p = 0.0609, d = +0.44, CI [-0.26, +11.77], 14/18 wins). These four data points generalize the boundary from "dataset-flip" to "dataset-conditioned optimality".
+
+C5 (System Overhead & Reproducibility): A complete computational profile (§10.4) shows the LeNetCSI+Attn backbone that attains the +8.14 pp gain is the *smallest* (0.128 M params) and runs at 2.73 ms/sample CPU inference — within the <10 ms real-time HAR budget on commodity mobile devices. The CBAM+ResNet18 control used in C10 is 89× larger but only 6.5× slower, confirming that capacity does not linearly translate to latency. The audit is reproducible on a single consumer GPU in ~5 GPU-hours; all code, per-seed accuracies, statistical pipeline, and trained model checkpoints will be released under MIT license upon acceptance.
+
+NOVELTY AND PRIOR WORK
+
+To our knowledge, no prior work has combined (i) paired LODO evaluation, (ii) Hedges' g-corrected effect size with CI, (iii) MDE pre-registration at fixed power, AND (iv) closed-form statistical foundations, applied to WiFi CSI cross-domain recognition. The cross-dataset replication revealing dataset-conditioned optimal representation (a four-data-point spectrum from large-effect to no-effect) is also novel. Our v2 cache reanalysis (16,447 real MMFi segments) corrects a previously-undocumented path-label artifact in the field's reference cache construction.
+
+REPRODUCIBILITY AND TRANSPARENCY
+
+All code (paired_runner, stat_eval, MDE calculator, t-SNE diagnostic, latency benchmark), per-seed accuracies, statistical pipeline, and trained model checkpoints will be released under an MIT license at a public repository upon acceptance. The audit is reproducible on a single consumer GPU in ~5 GPU-hours, enabling direct replication by reviewers. The pre-print of this manuscript is available at arXiv (v9, Sep 29 2026) and an anonymized version of the latest revision is in the supplementary material for double-blind review.
+
+We note that we explicitly do NOT interpret non-significant comparisons as evidence that the underlying algorithmic idea is incorrect; we report them as "not distinguishable from noise in our paired evaluation." This framing is consistent with the IEEE TMC convention for negative results.
+
+SUGGESTED REVIEWERS
+
+We suggest the following reviewers (none have collaborated with us in the past five years):
+
+  1. Prof. Zheng Yang (Tsinghua University), the lead author of Widar3.0, with deep expertise in CSI sensing.
+  2. Prof. Bin Guo (Northwestern Polytechnical University, China), mobile and ubiquitous computing.
+  3. Prof. Daqing Zhang (Institut Polytechnique de Paris / Peking University), WiFi sensing.
+  4. Prof. Xiaolong Zheng (Southwest University), WiFi sensing.
+  5. Prof. Jie Xiong (University of Massachusetts Amherst), mobile sensing.
+
+ETHICS AND BROADER IMPACT
+
+We discuss both positive applications (paired protocol for other WiFi sensing tasks, deployment guidance) and dual-use privacy concerns in our Broader Impact section. We do not collect any new human data; all datasets used are publicly available.
+
+CONFLICTS OF INTEREST
+
+The authors declare no conflicts of interest.
+
+We believe this manuscript aligns well with TMC's mission to publish high-quality research on mobile and pervasive computing systems, and would be pleased to address reviewer comments should the paper be considered for publication.
+
+Sincerely,
+
+Wang Lei (王磊)
+School of Computer Science and Technology
+Dalian Neusoft University of Information (大连东软信息学院)
+Dalian 116023, China
+Email: 56215141@qq.com
+ORCID: 0009-0003-3371-6056 (https://orcid.org/0009-0003-3371-6056)

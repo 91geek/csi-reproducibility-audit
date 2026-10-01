@@ -1,0 +1,37 @@
+Subject: Request for arXiv cs.LG endorsement — Cross-domain WiFi gesture recognition reproducibility audit
+
+尊敬的王老师：
+
+您好！我是大连东软信息学院 (Dalian Neusoft University of Information)的访问研究人员，目前在做一个 WiFi CSI 跨域手势识别方向的研究。最近准备向 arXiv 投递一篇论文（cs.LG primary + eess.SP cross-list），但因本人是首次在该 archive 投稿，需要一位已经在 cs.LG 有 endorsement 资格的 author 帮忙 endorse。
+
+了解到您长期深耕联邦学习（AAAI 2025 "Data-Free Black-Box FL"、EMNLP 2023 "FedID"）和跨域泛化（ACL 2024 "Zero-Shot Cross-Domain Dialogue State Tracking"），与我们的论文核心议题高度契合，故冒昧请求您的 endorsement。
+
+【论文核心贡献（200 字摘要）】
+WiFi CSI-based cross-domain gesture recognition has attracted intensive research in the past six years, yet reported improvements rarely reproduce under controlled evaluation. We present a paired benchmark covering ten recent algorithmic improvements evaluated under an 18-fold × 5-seed cross-validated protocol on the Widar3.0 benchmark. All ten methods fail to reach significance (|Cohen's d| < 0.3, p > 0.28). Variance decomposition reveals the root cause: within-seed standard deviation (4.82 pp) is 4.7× the largest reported effect. We then introduce a minimal signal-representation modification—expanding the BVP operator to retain the multi-Rx antenna dimension—that yields +8.14 pp (Cohen's d = 1.71, 19/1 wins). We further test this finding on a second dataset MMFi and find it does not generalize—the dataset-optimal representation flips to multi-scale on MMFi. No single BVP representation is universally optimal.
+
+【论文关键文件】
+- arxiv_submission/paper_arxiv.tex（LaTeX 源文件，约 25 页）
+- arxiv_submission/paper_arxiv.pdf（编译后 PDF）
+- arxiv_submission/ARXIV_METADATA.txt（投稿元数据）
+
+投稿后会有 arXiv submission ID，可在 https://arxiv.org/auth/endorsers 查询。
+
+【与您研究的相关性】
+- 您在 AAAI 2024-2025 关于联邦学习的系列工作（如 FedID）与我们的跨域泛化主题直接相关
+- 您在 ACL 2024 关于 Zero-Shot Cross-Domain 的工作，与我们的"跨域性能不鲁棒"结论形成对照
+- 论文核心是 ML benchmark + 可复现性方法论，符合 cs.LG 的核心议题
+
+【endorsement 操作】
+1. 登录您的 arXiv 账号（您应有 cs.LG 的 endorsement 资格）
+2. 访问 https://arxiv.org/auth/endorsers
+3. 在 endorse others 部分搜索我的 arXiv submission ID（投稿后我会在邮件补充）
+4. 点击 endorse 即可（无需填写详细理由）
+
+如蒙支持，万分感谢。如有任何问题，欢迎邮件沟通。
+
+此致
+敬礼
+
+[你的名字]
+20242100136@dcc.edu.cn
+大连东软信息学院 (Dalian Neusoft University of Information)

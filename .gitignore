@@ -1,0 +1,67 @@
+# =============================================================
+# Python
+# =============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+
+# =============================================================
+# IDE / OS
+# =============================================================
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~
+
+# =============================================================
+# Data caches (large, hosted on Zenodo — see results/README.md)
+# =============================================================
+data/
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.pkl
+src/bvp_test/cache/
+src/bvp_test/latency_table.json
+src/cfg_logs/
+src/tb_logs/
+src/widar_results.json
+
+# =============================================================
+# Logs and intermediate
+# =============================================================
+*.log
+*.tmp
+*.bak
+*.bak_*
+*.pre_*.bak
+src/widar_plot_*.png
+src/compare_*.png
+
+# =============================================================
+# PDFs (hosted as arXiv submission, not in this repo)
+# =============================================================
+*.pdf
+
+# =============================================================
+# Project-specific exclusions
+# =============================================================
+# TensorBoard runs
+runs/
+logs/
+
+# Build artifacts
+build/
+dist/
+
+# Optional venv (commit if reviewers want to install from scratch)
+.venv/
+venv/

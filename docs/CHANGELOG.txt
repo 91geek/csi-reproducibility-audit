@@ -1,0 +1,147 @@
+v3 (2026-09-12):
+- Removed Liu 2025 main-thread comparison
+- Generalized C10 to a larger-backbone capacity control
+- Unified fold/seed/n terminology
+- Removed strong phrasing (first, guaranteeing, statistically real, active hurt)
+- Replaced example.org with placeholder for acceptance
+- Added Threats to Validity and Data Availability sections
+- Q3 emphasizes component-level isolation rather than rebuttal of any system
+
+v4 (2026-09-13):
+- Unified fold/seed/n terminology across abstract, §3.4, §3.5, §3.3 Methods, §5 Results, Table 1 caption, §Reproducibility, and Appendix A
+- Corrected "6-fold × 3-seed" (was wrongly "18-fold × 3-seed") for Reality Check #1
+- Removed orphan \bibitem{liu2025} (no \cite{liu2025} in main text)
+- Added "to our knowledge" / "in our sample" qualifiers for the 47-paper survey, the <35% guarino2026 statistic, and the RuView accuracy claim
+- Fixed Widar3.0 class count: 6 classes (was 8) in FAQ Q5
+- Softened "47+ papers" to "47 papers" for consistency with abstract
+
+v5 (2026-09-13, PDF compile fixes):
+- Stubbed IEEEkeywords environment (\newenvironment) for arXiv article class compatibility (IEEEtran-only)
+- Switched \BVP/\CSI/\MDE/\LODO/\Rx/\CI from \mathrm{} to \text{} so they work in text mode (article class with amstext loaded)
+- Fixed fig path: figs/tsne_{widar,mmfi}_combined.png → figs/fig_tsne_{widar,mmfi}.png
+- Verified clean compile: pdflatex × 2, **0 errors / 0 undefined refs**, 24 pages, 2.21 MB PDF
+- _repack_v4.py reused (script name unchanged but produces v5 zip)
+
+v6 (2026-09-13, formatting/typography pass):
+- Fixed 30 sites where control-word macros swallowed the following space:
+  \BVP, \CSI, \MDE, \Rx now defined/used so "CSI cross-domain", "BVP operator",
+  "Rx antenna", "MDE analysis" no longer render as one word ("CSIcross-domain").
+- Added missing \PR macro definition (was used 4x but never defined -> LaTeX error).
+- Fixed malformed math "$\sim$2$ are" -> "$\sim 2$ are" (had opened an unterminated
+  math group, producing "~2arelinearlyindependent" and an overfull line).
+- Fixed pre-existing bug "Wang \etal\~\cite{...}" -> "\etal~\cite{...}" (~ was being
+  parsed as an accent, rendering "et al.˜ []wang2026survey").
+- Literal "4.82pp / 7.48pp / 10--20pp" -> thin-spaced "4.82\,pp" etc.
+- Cleaned author block: removed broken "Anonymous Author One/Two/Three" +
+  "{author1,author2,author3}@anon.example" placeholder -> single clean placeholder.
+- Appendices converted from \section*{Appendix A: ...} + manual \addcontentsline to
+  real \appendix + \section{...} -> PDF now shows "A Figure and Table Index" ...
+  "E Frequently Asked Reviewer Objections".
+- Appendix A index rewritten with live \ref{} and corrected content: paper has
+  Figures 1-7 and Tables 1-2 (the old index listed 10 figures / 2 tables, including
+  four figures that were never included).
+- Captions no longer hardcode "(Fig. 0)".."(Fig. 5)" (conflicted with auto-numbering).
+- "Fig. B.4" -> \ref{fig:pr_gain}; added \label{tab:mde} to the MDE appendix table.
+- Table 1: was 428pt overfull (unbreakable "l" columns); rewritten with p{} columns,
+  tabcolsep 3pt -> now fits the text width. Same for Appendix A/C tables.
+- Added \usepackage{microtype} and \emergencystretch=3em.
+- Section titles shortened to avoid ugly line-broken hyphenation
+  ("Fail the Paired Au-dit" -> fits on one line; "Why Single-Seed Studies Mislead"
+  -> "Why Seeds Mislead"; "MDE Framework: Statistical Power Pre-Registration"
+  -> "MDE Analysis: Power in Practice").
+- Result: pdflatex × 2 = 0 errors, 0 undefined refs, 0 overfull, 0 underfull, 24 pages.
+- Submission zip now contains only the 8 figures actually referenced (10 files, 1.86 MB).
+
+v7 (2026-09-29, MMFi v2 + 引文 integrity):
+- Updated §9 with MMFi v2 cache reanalysis: 16{,}447 segments from action_segments.csv,
+  label-integrity 0 issues, between-vs-within variance ratio = 617.85, granularity
+  sweep 0.169 (27-class) → 0.603 (2-class), F-48 v2 paired LeNet vs CBAM+ResNet18
+  Δ = -0.33 pp (p = 0.564, n = 3 seeds).
+- New §9.4 "Updated Dataset-Dependent Optimality (Four Data Points)" table with
+  MMFi v2 row added.
+- 12 citation mismatches corrected (authors / titles / venues), e.g.
+  Guarino A.→I.; Sterzinger B.→J. Strohmayer; Zhu H.→G.; Vassallo G.→A. Brunello;
+  PerceptAlign Chen X.→S. Jia; RuView S. Cohen→R. Cohen; Sculley NeurIPS Workshop→
+  ICLR Workshop; Bouthillier NeurIPS→MLSys; 4 titles rewritten to their real
+  form (SenseFi / CSI-Bench / WiTraj / wang2026survey).
+
+v8 (2026-09-29, 50k Widar P0 重测回填):
+- 14 textual replacements: abstract tail, §3 Methods, §5 fig caption, §5 main
+  paragraph, §5 table row C10v2, §2.4 SDP paragraph.
+- Headline number: 50k subset 30.55%, Attn = 38.49 ± 7.39 vs CBAM = 32.73 ± 11.85,
+  Δ = +5.75 pp (p = 0.0609, d = +0.44, 95% CI [-0.26, +11.77], 14/18 wins).
+- Direction reverses C10 (12k: Δ = -4.61 pp) → C10v2 (50k: Δ = +5.75 pp).
+- paper_arxiv.tex still 25 pages.
+
+v10 (2026-10-01, P0/P1 fixes + 重新打包):  # see prior entry above
+
+v11 (2026-10-01, TMC 改造 - §3.5 Statistical Foundation + §10.4 System Overhead):
+- New §3.5 "Statistical Foundation: Closed-Form Bounds for the Paired Audit"
+  (3 theorems + 1 corollary). Theorem 1 derives paired sample size bound
+  n ≥ (z_{1-α/2}+z_{1-β})²σ²/ε²; Theorem 2 derives MDE closed form;
+  Theorem 3 states Hedges' g small-sample correction; Corollary 1 unifies
+  the three into a three-criterion audit test. Proofs in Appendix F.
+- New §10.4 "System Overhead: Backbone Capacity vs Inference Cost" with
+  latency table (5 backbones × 2 batch sizes on Widar3.0 input). Key result:
+  CBAM+ResNet18 is 89× larger than LeNetCSI+Attn but only 6.5× slower at
+  B=1; LeNetCSI+Attn runs at 2.73ms/sample, within <10ms real-time HAR budget.
+- Title updated to: "WiFi CSI Cross-Domain Gesture Recognition:
+  A Reproducibility Audit Revealing Dataset-Conditioned Optimality of the
+  Multi-Rx Representation" (was: "...and the Boundary of Multi-Rx
+  Representation"). pdfinfo updated to match.
+- Abstract opening rewritten: "We present a paired benchmark" → "We present
+  a reproducibility audit"; added sentence about closed-form statistical
+  foundations (§3.5 reference).
+- New files:
+  - src/bench_latency_table.py → results in src/bvp_test/latency_table.json
+  - REPRODUCIBILITY.md (GitHub repo README for TMC code release)
+  - reproduce.sh (one-click pipeline: build_caches → bench_widar →
+    bench_mmfi → bench_latency → run_analysis → gen_figs)
+  - requirements.txt (Python deps for code release)
+  - TMC_COMPRESSION_PLAN.md (34→12 page double-column IEEEtran plan)
+  - cover_letter_tmc.txt (revised with v11 content + Statistical Foundation)
+- pdflatex × 2: 0 errors / 0 undefined / 0 overfull. paper_arxiv.pdf
+  = 34 pages, 2.35 MB.
+
+v10 (2026-10-01, 重新打包 + fig 视觉修复):
+- Replaced v6 zip (1.91 MB, Sep 13, missing v7/v8/v9 修订) with v9 zip (1.85 MB,
+  Oct 1, full content). Old v6 backup as paper_arxiv_v6_old.zip.
+- fig0_pipeline / fig1_main_boxplot / fig5_mechanism visually fixed:
+  fig0 arrow labels (★ ours / baseline / vanilla / ★→ / A10) added after
+  bbox-overlap analysis; fig1 unified data labels to right side with white bbox;
+  fig5 Panel (a) interpretation moved to y=-0.32, Panel (c) annotations with bbox.
+- pdflatex × 2: 0 errors / 0 undefined / 0 overfull / 1 underfull (line 417, accepted).
+- paper_arxiv.pdf = 29 pages, 2.31 MB.
+- Fig submission: 8 referenced figs (paper_arxiv.tex) + 13 backup figs (figs/).
+
+v11 (2026-10-01, P0/P1 audit fixes from adversarial self-review):
+- **P0-1 (counting mismatch):** §4.3 Methods Compared rewritten from "ten methods
+  spanning three categories" to "ten method axes spanning three categories
+  (yielding 11 paired comparisons)"; abstract rewritten from "ten recent
+  algorithmic improvements" to "eleven paired comparisons across ten method
+  axes"; §5 title from "Ten Methods Fail" to "Eleven Paired Comparisons Under
+  the Paired Audit"; §11 Conclusion from "ten recent improvements" to "eleven
+  paired comparisons across ten method axes".
+- **P0-2 (C6 win count arithmetic):** abstract rewritten from "Cohen's d = 1.71,
+  19/1 wins" to "all 18 paired comparisons positive" (raw data: 18 wins, 0
+  losses, n=18 from f33_rx_vs_ms_val_backup.json × f34_widar_orig_vs_f24.json);
+  intro §1 from "across 19 of 20 paired comparisons" to "across all 18 paired
+  comparisons of C6".
+- **P0-3 (PR/Fisher F confusion):** abstract + §1 disambiguated: PR 1.0 → 1.89
+  (89% effective antenna rank) is separate from total Fisher information
+  1.82× (~82%); abstract now says "PR (1.0 → 1.89) and a 1.82× (~82%)
+  increase in total Fisher information".
+- **P1-4 (MMFi 27 vs 14):** §4.1 rewritten to explicit v1 cache (27 classes,
+  1080 samples, path-labeled) vs v2 cache (16,447 segments, all 27 gestures).
+- **P1-5 (C10v2 CI caveat in abstract):** abstract now states "the 95% CI
+  crosses zero and p marginally exceeds α=0.05; the 50k result is consistent
+  with both a small positive and a near-null effect under our power
+  budget—we therefore report the direction-reversal as a weak signal".
+- **P1-6 (v1/v2 cache distinction in abstract):** abstract specifies "v1
+  path-labeled cache, 1080 samples" for the C7c "flips" claim.
+- **P1-7 (Table 1 cache note):** Table 1 caption appended with explicit
+  Cache note documenting C7a-c on v1 cache + Section 9 v2 reanalysis numbers
+  (Δ=-0.33, p=0.564, n=3 seeds).
+- pdflatex × 2: 0 errors / 0 undefined / 0 overfull / 1 underfull (line 417,
+  pre-existing). paper_arxiv.pdf = 30 pages, 2.32 MB.
+- Submission zip: paper_arxiv.zip = 1.85 MB (Oct 1 16:29).

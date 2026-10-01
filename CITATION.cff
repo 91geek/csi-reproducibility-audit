@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this code or the paired LODO+Multi-Rx protocol, please cite the companion paper."
+title: "Reproducibility Audit of WiFi CSI Cross-Environment Gesture Recognition Revealing Dataset-Conditioned Optimality of the Multi-Rx Representation"
+type: software
+date-released: 2026-10-01
+license: MIT
+repository-code: "https://github.com/91geek/csi-reproducibility-audit"
+keywords:
+  - WiFi sensing
+  - Channel State Information
+  - Cross-environment
+  - Gesture recognition
+  - Reproducibility
+  - Statistical rigor
+  - Paired LODO evaluation
+authors:
+  - family-names: "Wang"
+    given-names: "Lei"
+    name-particle: ""
+    affiliation: "[Institution — to be filled by author]"
+    orcid: "https://orcid.org/0009-0003-3371-6056"
+    email: "56215141@qq.com"
+# Reference publication will be filled once the IEEE TMC paper receives DOI:
+# preferred-citation:
+#   type: article
+#   title: "..."
+#   authors: [...]
+#   journal: "IEEE Transactions on Mobile Computing"
+#   year: 2026
+#   doi: "10.1109/..."
