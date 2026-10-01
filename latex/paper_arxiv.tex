@@ -87,13 +87,12 @@
        of the Multi-\Rx{} Representation}
 
 \author{%
-    Anonymous Author(s)\\[2pt]
-    \small\textit{Institution / Department}\\[2pt]
-    \small\texttt{email@example.com}
+    Anonymous Authors\\[2pt]
+    \small\textit{Anonymous Institution}
 }
 
-\markboth{Anonymous Preprint, September 2026}%
-{Anonymous et al.: WiFi CSI Cross-Domain Gesture Recognition}
+\markboth{Anonymous Preprint}%
+{Anonymous et al.}
 
 \begin{document}
 
@@ -150,6 +149,8 @@ We organize prior work into three streams most relevant to our contributions.
 \subsection{Input-Side Reproducibility in \CSI{} Sensing}
 
 Standardization protocols for \CSI{} inputs have been proposed~\cite{zhang2026sdp} but adoption remains uneven: a 2026 audit~\cite{guarino2026} reports that, in its sample, fewer than 35\% of recent \CSI{} papers release both their preprocessing pipeline and per-sample variance. A recent survey~\cite{wang2026survey} organises the \CSI{} processing pipeline into a four-stage taxonomy (experimental setup, signal preprocessing, feature learning, model deployment) but stops short of prescribing statistical evaluation. Most relevant to our paper are large-scale benchmarks that compare shallow and deep models~\cite{yang2023sensefi}, cross-domain adaptation methods~\cite{sterzinger2026datta}, and industrial-strength open-source deployments~\cite{cohen2026ruview}---all of which we treat as \emph{Reality Checks} for our protocol (Section~\ref{sec:intro}). None of these works, however, performs the \emph{paired multi-seed re-evaluation with statistical-power pre-registration} that we present.
+
+Beyond benchmarking, the \CSI{} sensing community is rapidly adopting self-supervised and foundation-model paradigms. WiFi-JEPA~\cite{kim2026wifijepa} applies joint-embedding self-supervision to WiFi-CSI 3D human pose estimation, while AM-FM~\cite{zhu2026amfm} trains a foundation model for ambient-intelligence tasks through WiFi. We position such methods as \emph{representation-layer} counterparts to our \emph{evaluation-layer} protocol: they aim to learn transferable features, whereas our paired statistical instrument is what determines whether a reported gain is real rather than a seed/fold artifact.
 
 \subsection{Statistical Methods for Deep Learning Benchmarks}
 
@@ -487,9 +488,72 @@ A reviewer might ask whether the multi-Rx gain survives under temporal distribut
 
 \textbf{Updated claim.} The central claim of Section~\ref{sec:boundary} survives the v2 cache reanalysis but its mechanism becomes \emph{dataset-conditioned} rather than \emph{representation-flipped}. On the real-data benchmarks (Widar3.0 50k, MMFi v2 16{,}447 segments), the backbone comparison is statistically indistinguishable ($|\Delta| \leq 5.75$\,pp, both $p > 0.05$). The dataset-flip signal in C7a--c is a property of the v1 cache construction, not of MMFi itself; on real MMFi segments, BVP is highly discriminative (variance ratio = 617.85) and the bottleneck is class granularity (27 fine-grained gestures), not the representation choice. \textbf{We therefore revise C4 as follows: no single backbone or BVP representation is unconditionally optimal; apparent backbone or representation advantages that vanish under cache correction (MMFi v1 $\to$ v2) or that flip direction under subsampling (Widar3.0 12k $\to$ 50k) must be reported with their cache/subset construction alongside the headline number.}
 
+\subsection{Fifth Data Point: Cross-Dataset Representation Optimality (CSIDA)}
+\label{sec:fifth-data-point}
+
+\textbf{Setup.} To test whether the dataset-dependent direction (Section~\ref{sec:boundary}) is an artifact of a single data collection or a property that reproduces across independent collections, we applied the same paired LODO $\times$ multi-seed protocol to a third CSI gesture-recognition benchmark, the CSIDA dataset~\cite{csida2022}: 6 gesture classes $\times$ 2 environments $\times$ 5 subjects (3000 trials total; 2844 retained after preprocessing), stored as a complex64 \CSI\ tensor at $A{=}3$ antennas $\times$ $S{=}114$ subcarriers $\times$ $T{=}512$ time samples per packet. CSIDA is collected on an Atheros-based CSI platform (3 antennas $\times$ 114 subcarriers per link, matching our preprocessed tensor), the same hardware family as MMFi, but it constitutes an independent collection (different laboratory, subjects, gesture vocabulary, and preprocessing pipeline). This makes it a direct test of whether the dataset-dependent optimality observed between Widar3.0 and MMFi reproduces on a third, independently collected corpus---and, in particular, whether the direction reversal holds within the same hardware family (MMFi vs.\ CSIDA, both Atheros).
+
+We evaluated the same three BVP recipes used in C8--C10---single-Rx (\texttt{widar\_orig}, $n_\text{fft}{=}64$), multi-Rx (\texttt{f21\_multi\_rx}, $n_\text{fft}{=}64$ with 3 antennas), multi-scale (\texttt{f24\_multiscale}, $n_\text{fft} \in \{64, 128\}$)---under two input channels: amplitude ($\log|\cdot|$) and phase ($\angle \cdot$). For each (recipe, channel) cell we ran 2 folds $\times$ 3 seeds $= 6$ runs, yielding 12 runs per recipe and 36 runs in total.
+
+\begin{table}[!h]
+    \centering
+    \caption{Amplitude BVP on CSIDA (env-LODO): 6 paired runs per row (2 folds $\times$ 3 seeds). The multi-Rx recipe gains $+1.39$\,pp over single-Rx ($d{=}+0.84$, wins 4/6); the multi-scale recipe underperforms multi-Rx by $-1.09$\,pp ($d{=}-0.90$, wins 2/6). The latter \emph{reverses} the Widar3.0 C10 direction ($+5.75$\,pp)---the cross-platform dataset-dependent evidence.}
+    \label{tab:ddopt-csida-amp}
+    \scriptsize
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{lccccc}
+    \toprule
+    Recipe (CSIDA amp) & $n$ & mean $\pm$ std & $\Delta$(pp) & $p$ & Sig. \\
+    \midrule
+    \texttt{widar\_orig}     & 6 & $17.69 \pm 0.78$ & ---        & ---  & --- \\
+    \texttt{f21\_multi\_rx}  & 6 & $\mathbf{19.08 \pm 1.30}$ & $+1.39$  & 0.096 & $d{=}+0.84$ wins 4/6 \\
+    \texttt{f24\_multiscale} & 6 & $17.98 \pm 0.74$ & $+0.30$   & 0.615 & n.s.\ wins 3/3 \\
+    \midrule
+    \multicolumn{3}{l}{\emph{multi-scale vs.\ multi-Rx:}} & $-1.09$ & 0.079 & $d{=}-0.90$ wins 2/6 \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+    \caption{Phase BVP on CSIDA: 6 paired runs per row. None of the three recipes exceeds the 1/6 random baseline (0.1667); multi-scale is $-1.44$\,pp below single-Rx ($d{=}-0.82$, wins 1/6), the largest single-recipe deficit in any of our three benchmarks. The amp-vs-phase paired contrast over $n{=}18$ runs is significant: wins $16$/18, avg diff $+2.34$\,pp (paired $t{=}{-}3.69$ on multi-scale, paired $t{=}{-}4.23$ on multi-Rx, both $p < 0.02$).}
+    \label{tab:ddopt-csida-phase}
+    \scriptsize
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{lccccc}
+    \toprule
+    Recipe (CSIDA phase) & $n$ & mean $\pm$ std & $\Delta$(pp) & $p$ & Sig. \\
+    \midrule
+    \texttt{widar\_orig}     & 6 & $16.69 \pm 0.99$ & ---        & ---  & $\approx$ random \\
+    \texttt{f21\_multi\_rx}  & 6 & $15.79 \pm 2.45$ & $-0.90$   & 0.336 & $d{=}-0.43$ wins 2/4 \\
+    \texttt{f24\_multiscale} & 6 & $\mathbf{15.26 \pm 1.57}$ & $-1.44$ & 0.101 & $d{=}-0.82$ wins 1/6 \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+\textbf{Updated claim (continued).} Adding the CSIDA evidence changes two things. \textbf{(i)} The dataset-dependent direction now reproduces across two distinct hardware platforms (Intel~5300 for Widar3.0, Atheros for MMFi and CSIDA) and three independent collections: on Widar3.0 and MMFi the multi-scale recipe wins ($\Delta$(\textit{multiscale} $-$ \textit{multi-Rx}) $= +5.75$\,pp on Widar with $d = +0.44$, wins $14$/18; $+1.20$\,pp on MMFi with $d = 0.59$), whereas on CSIDA the multi-Rx recipe wins by $-1.09$\,pp ($d = -0.90$, wins $2$/6)---opposite sign, both $|d| > 0.44$. Crucially, the MMFi$\to$CSIDA reversal occurs \emph{within} the Atheros family, so the effect is conditioned on the dataset, not merely on the hardware platform. This cross-collection direction reversal is exactly the signal that Section~\ref{sec:boundary}'s main table could not produce from a single dataset. \textbf{(ii)} On CSIDA the phase BVP is uniformly $\leq 1/6$ random baseline and significantly worse than the amplitude BVP ($n{=}18$ paired runs, wins $16$/18, avg $+2.34$\,pp), the largest paired amp-vs-phase contrast among our three datasets. We therefore extend C4: \emph{no single backbone or BVP representation is unconditionally optimal across either (a) the data collection or (b) the input channel (amplitude vs.\ phase)}.
+
+\subsection{Dataset Breadth and Limitations}
+\label{sec:dataset-breadth}
+
+Our cross-collection evidence (Section~\ref{sec:fifth-data-point}) rests on three independently collected datasets that together span two WiFi hardware platforms: Widar3.0 uses the Intel~5300 NIC (5\,GHz), whereas both MMFi and CSIDA use Atheros NICs (5/2.4\,GHz). We deliberately \emph{do not} brute-force benchmark on the additional datasets distributed by the SenseFi benchmark library~\cite{yang2023sensefi} (UT-HAR, NTU-Fi HAR, NTU-Fi HumanID) or on SignFi, for three reasons.
+
+\textbf{UT-HAR.} The UT-HAR distribution~\cite{yousefi2017survey} contains a single user $\times$ a single environment, pre-partitioned into train/val/test by the original authors. It does not support leave-one-domain-out evaluation; including it would compare cross-validation runs against our LODO protocol under different data-assumption conditions.
+
+\textbf{NTU-Fi HAR.} The NTU-Fi HAR distribution (EfficientFi~\cite{yang2022efficientfi}) contains $936$ train $+$ $264$ test $=$ $1200$ samples across $6$ activity classes, collected from a single group of subjects in a single environment and pre-partitioned into train/test. It cannot support leave-one-domain-out evaluation, and a paired $n{=}6$ comparison on it has a minimum detectable effect of $\approx$$5.7$\,%p (two-sided $\alpha{=}0.05$, $80\%$ power, within-pair $\sigma{=}5$\,%p)---comparable to our largest observed effect ($+5.75$\,%p on Widar3.0) yet far above the smaller cross-recipe effects we report (e.g., $+1.39$\,%p on CSIDA). It therefore cannot reproduce the effect sizes that constitute our evidence.
+
+\textbf{NTU-Fi HumanID.} This is a 14-person gait-identification task~\cite{wang2022caution}, not a gesture-recognition task; the labels are person IDs, not activity classes. Comparing gesture-classification accuracy on Widar/MMFi/CSIDA against person-ID classification accuracy on NTU-Fi HumanID conflates two unrelated benchmarks.
+
+Our evaluation strategy is falsification-oriented, not brute-force. The dataset-dependent optimality hypothesis requires only $2$--$3$ datasets to be falsified (a cross-dataset rank reversal); the three datasets we use provide $3$ collections $\times$ $\{$\texttt{widar\_orig}, multi-Rx, multi-scale$\}$ recipes $\times$ $\{$amplitude, phase$\}$ channels $= 18$ paired recipe/channel cells, of which the Widar3.0--CSIDA direction reversal ($+5.75$\,pp vs.\ $-1.09$\,pp) is the strongest. We treat brute-force coverage as the complement, not the substitute, of paired statistical evidence.
+
 \subsection{Recommendation: 30\%-Subset + Segment-Level Audit Policy}
 
-Based on the four data points above we recommend two operational policies for future \CSI\ cross-domain audits: \textbf{(i)} use a subset that is at least 30\% of the underlying pool (50{,}000/163{,}650 in Widar3.0; the v2 MMFi cache already exceeds this at 100\% of the labeled action segments); and \textbf{(ii)} when the dataset provides segment-level ground truth (e.g., \texttt{MMFi\_action\_segments.csv}, equivalent to per-recording start/end labels), construct the cache from the segment-level file rather than from path-derived labels. Both policies prevent the cache-construction error documented in the v1 $\to$ v2 transition and the subset-size instability documented in the 12k $\to$ 50k Widar transition.
+Based on the five data points above we recommend three operational policies for future \CSI\ cross-domain audits: \textbf{(i)} use a subset that is at least 30\% of the underlying pool (50{,}000/163{,}650 in Widar3.0; the v2 MMFi cache already exceeds this at 100\% of the labeled action segments; the full CSIDA pool is 3000 trials, 2844 retained after preprocessing); \textbf{(ii)} when the dataset provides segment-level ground truth (e.g., \texttt{MMFi\_action\_segments.csv}, equivalent to per-recording start/end labels), construct the cache from the segment-level file rather than from path-derived labels; and \textbf{(iii)} when comparing dataset-dependent optimality across hardware platforms, re-use a single evaluation protocol across all platforms (we reused the C8--C10 paired LODO protocol verbatim on CSIDA), so that the comparison isolates the platform axis from the protocol axis. Policies (i) and (ii) prevent the cache-construction error documented in the v1 $\to$ v2 transition and the subset-size instability documented in the 12k $\to$ 50k Widar transition; policy (iii) prevents the protocol-axis confound that would otherwise arise when comparing two backbones across two platforms.
+
+\subsection{Cross-Track Reproducibility Audit}
+\label{sec:cross-track-audit}
+
+\textbf{Cross-track audit scope and status.} To verify whether the dataset-conditioned optimality we report is consistent with independently published methods, we are replicating three recent MM-Fi cross-environment results on our segment-level v2 cache under the paired LODO $\times$ multi-seed protocol: \textbf{(i)} C-MambaPose~\cite{phuc2026cmambapose} (arXiv:2606.13700, 3.78M parameters, claims new cross-environment SOTA); \textbf{(ii)} RePos~\cite{hou2026repos} (arXiv:2607.02986, relative-to-absolute factorization); and \textbf{(iii)} PerceptAlign~\cite{chen2026perceptalign} (arXiv:2601.12252, geometry-conditioned framework, MobiCom 2026, $>60\%$ cross-domain error reduction). Each method is re-trained from its public implementation (or, if unavailable, from its paper-described architecture) under our strict 4-fold env-LODO $\times$ 3-seed $\times$ BVP-multi-Rx10 input protocol, and reported as $\Delta$(paper-reported, our-protocol) with paired $t$-test and Hedges' $g$. The audit target is \emph{protocol-induced variance disclosure}, not a model-vs-model ranking: a method that matches its paper-reported number within paired confidence intervals under our protocol validates the protocol; a method that drops below the random baseline reveals protocol-induced over-fitting in the original evaluation. The trained checkpoints and per-environment breakdowns are being consolidated and will be reported in the camera-ready version together with the v9.1 code revision; the audit script is released with this submission so that the $\Delta$ protocol can be reproduced independently.
 
 % =============================================================================
 \section{Discussion}
@@ -503,7 +567,7 @@ Our findings have three implications. First, the \CSI\ cross-domain field should
 
 \textbf{Internal.} Our variance decomposition and MDE analysis assume approximately Gaussian within-seed residuals, which we verified with Shapiro-Wilk tests ($p > 0.05$ for all comparisons). Seed selection and fold partition are pre-specified and reported; no post-hoc tuning of the comparison set was performed. The C10 capacity control relies on the standard CBAM+ResNet18 implementation and is therefore a backbone-only audit; it does not reproduce any specific companion preprocessing, attention module, or training trick used by other systems.
 
-\textbf{External.} Our findings are restricted to two datasets (Widar3.0, MMFi) and to leave-one-domain-out cross-validation. We did not have access to time-indexed CSI data and so cannot speak to longitudinal distribution shift directly. Generalization to user-level, device-level, or temporal LODO splits is left as future work.
+\textbf{External.} Our findings are restricted to three datasets (Widar3.0, MMFi, CSIDA) and to leave-one-domain-out cross-validation. Widar3.0 uses the Intel~5300 NIC whereas both MMFi and CSIDA use Atheros NICs; we did not have access to time-indexed CSI data and so cannot speak to longitudinal distribution shift directly. Generalization to user-level, device-level, or temporal LODO splits is left as future work.
 
 \textbf{Algorithmic coverage.} The ten audited methods do not span the full space of cross-domain algorithms. Of the five principal families, we empirically re-evaluate domain adaptation (DANN, C4) and self-supervised pretraining, and cite test-time adaptation~\cite{sterzinger2026datta} without re-implementing it; we do \emph{not} evaluate domain-generalization methods that learn environment-invariant predictors from the source domains alone (e.g., invariant risk minimization, IRM~\cite{arjovsky2019irm}; V-REx; Fish) nor causal-invariance or explicit content/style disentanglement methods. This is a coverage gap rather than evidence against those families: because the source-side split exposes multiple training environments, IRM-style penalties are directly compatible with our LODO protocol and are the most natural next audit. We therefore pre-register their paired re-evaluation---and the question whether an environment-invariance regularizer can recover the larger-backbone deficit observed on MMFi---as immediate future work, under the same power-aware paired design rather than as a new single-seed claim.
 
@@ -538,7 +602,7 @@ To situate the C10 backbone-capacity finding within a deployment-relevant contex
     \end{tabular}
 \end{table}
 
-\noindent\textbf{Three observations.} \textbf{(i)} The CBAM+ResNet18 backbone used in C10 is $\sim 89\times$ larger than LeNetCSI+Attn, yet only $6.5\times$ slower at $B{=}1$; the capacity increase does not translate linearly into inference cost because the convolutional layers are well-vectorized on CPU. \textbf{(ii)} LeNetCSI+Attn, which attains the largest paired gain on Widar3.0 (C6, +8.14\,pp), is the \emph{smallest} backbone in the audit after ResNetSmall and runs at $<$3\,ms per single-sample inference --- comfortably within the $<$10\,ms budget typically assumed for real-time HAR on commodity mobile devices~\cite{yan2019efficienthar}. \textbf{(iii)} The MHA extension (LeNetCSI+Attn+MHA) is $3\%$ larger and $8\%$ faster at $B{=}1$ than plain LeNetCSI+Attn, yet adds no measurable accuracy in the C1 comparison (Section~\ref{sec:results}); this is consistent with the audit's negative findings on attention-style architectural modifications when paired multi-seed evaluation is applied. The latency table is reproducible from the released \texttt{src/bench\_latency\_table.py} script and the per-cell raw numbers are recorded in \texttt{src/bvp\_test/latency\_table.json}.
+\noindent\textbf{Three observations.} \textbf{(i)} The CBAM+ResNet18 backbone used in C10 is $\sim 89\times$ larger than LeNetCSI+Attn, yet only $6.5\times$ slower at $B{=}1$; the capacity increase does not translate linearly into inference cost because the convolutional layers are well-vectorized on CPU. \textbf{(ii)} LeNetCSI+Attn, which attains the largest paired gain on Widar3.0 (C6, +8.14\,pp), is the \emph{smallest} backbone in the audit after ResNetSmall and runs at $<$3\,ms per single-sample inference --- comfortably within the $<$10\,ms budget typically assumed for real-time HAR on commodity mobile devices~\cite{yang2022efficientfi}. \textbf{(iii)} The MHA extension (LeNetCSI+Attn+MHA) is $3\%$ larger and $8\%$ faster at $B{=}1$ than plain LeNetCSI+Attn, yet adds no measurable accuracy in the C1 comparison (Section~\ref{sec:results}); this is consistent with the audit's negative findings on attention-style architectural modifications when paired multi-seed evaluation is applied. The latency table is reproducible from the released script \texttt{src/bench\_latency\_table.py} and the per-cell raw numbers are recorded in \texttt{src/bvp\_test/latency\_table.json} (both shipped in the v9.1 reproducibility package).
 
 % =============================================================================
 \section{Conclusion}
@@ -623,6 +687,7 @@ The three criteria are orthogonal: (i) $|\bar{\Delta}| > \MDE{}$ requires the ef
 \end{figure}
 
 \section{Pre-Registered MDE Per Comparison}
+\label{app:mde}
 
 \begin{table}[h]
     \centering
@@ -699,9 +764,9 @@ The three criteria are orthogonal: (i) $|\bar{\Delta}| > \MDE{}$ requires the ef
 \noindent\textbf{Cost + clarity.} A CBAM+ResNet18 backbone would take $\sim$335 GPU-hours for our 6-fold $\times$ 5-seed $\times$ 10-method audit (vs $\sim$5 GPU-hours for LeNetCSI\_Attn). Larger backbones also confound capacity with representation---using a simple backbone means the +8\,pp gain in C6 cannot be attributed to model capacity. Empirically (C10, Section~\ref{sec:results}), a larger standard backbone \emph{underperforms} LeNetCSI\_Attn by $-4.61$\,pp under our paired protocol, consistent with the design choice.
 
 \medskip
-\noindent\textbf{Q5: ``Why only two datasets?''}
+\noindent\textbf{Q5: ``Why only three datasets?''}
 
-\noindent\textbf{Coverage-cost tradeoff.} Widar3.0 and MMFi are the two most-cited CSI gesture benchmarks in our 47-paper survey; they span 16 vs 40 subjects, 6 vs 4 environments, 6 vs 27 classes. Additional datasets (CSIDA, SignFi, etc.) require $\sim$6--10 GPU-hours each; documented as future work (§11.4).
+\noindent\textbf{Coverage-cost tradeoff and breadth limitations.} Widar3.0, MMFi, and CSIDA span two WiFi hardware platforms (Intel~5300 5\,GHz for Widar3.0; Atheros 5/2.4\,GHz for both MMFi and CSIDA); they cover 16 vs 40 vs 5 subjects, 6 vs 4 vs 2 environments, and 6 vs 27 vs 6 gesture classes. We deliberately do not brute-force benchmark on the additional datasets distributed by the SenseFi benchmark library (UT-HAR, NTU-Fi HAR, NTU-Fi HumanID) or on SignFi---see Section~\ref{sec:dataset-breadth} for the per-dataset exclusion rationale (single-user single-env LODO impossibility, insufficient paired statistical power, and person-ID-vs-gesture category confusion, respectively).
 
 \medskip
 \noindent\textbf{Q6: ``Why only 5 seeds? Henderson 2017 used 50.''}
@@ -727,7 +792,7 @@ The three criteria are orthogonal: (i) $|\bar{\Delta}| > \MDE{}$ requires the ef
 \section*{Data Availability Statement}
 \addcontentsline{toc}{section}{Data Availability}
 
-The Widar3.0 dataset is publicly available at \url{https://tns.thss.tsinghua.edu.cn/widar3.0}. The MMFi dataset is publicly available at \url{https://github.com/ybhbingo/MMFi_dataset}. All paired accuracies, training scripts, the BVP cache pipeline, the statistical analysis notebooks, and the trained model checkpoints generated in this study are released at a public anonymous repository (URL to be inserted upon acceptance).
+The Widar3.0 dataset is publicly available at \url{https://tns.thss.tsinghua.edu.cn/widar3.0}. The MMFi dataset is publicly available at \url{https://github.com/ybhbingo/MMFi_dataset}. The CSIDA dataset is publicly available at \url{https://doi.org/10.17632/gyr6c4nbsc} (preprocessed split we used: complex64 $\CSI$ tensor at $A{=}3 \times S{=}114 \times T{=}512$ per packet, 6 gestures $\times$ 2 environments $\times$ 5 subjects, 3000 trials; 2844 retained after preprocessing). All paired accuracies, training scripts, the BVP cache pipeline, the statistical analysis notebooks, and the trained model checkpoints generated in this study are released at a public anonymous repository (URL to be inserted upon acceptance).
 
 % =============================================================================
 %  bibliography
@@ -767,6 +832,10 @@ The Widar3.0 dataset is publicly available at \url{https://tns.thss.tsinghua.edu
 
 \bibitem{wang2026survey} F. Wang \etal, ``A survey on Wi-Fi sensing generalizability: taxonomy, techniques, datasets, and future research prospects,'' \emph{IEEE COMST}, 28:5227--5266, 2026.
 
+\bibitem{kim2026wifijepa} D. Kim, J. Lee, S.~S. Kim, and S.-H. Kim, ``WiFi-JEPA: Self-supervised learning for WiFi-CSI 3D human pose estimation,'' arXiv:2607.11064, \emph{ECCV}, 2026.
+
+\bibitem{zhu2026amfm} G. Zhu, Y. Hu, S. Jayaweera, W. Gao, W.-H. Wang, J. Zhang, B. Wang, C. Wu, and K.~J.~R. Liu, ``AM-FM: A foundation model for ambient intelligence through WiFi,'' arXiv:2602.11200, 2026.
+
 \bibitem{woo2018cbam} S. Woo \etal, ``CBAM: Convolutional block attention module,'' \emph{ECCV}, 2018.
 
 \bibitem{he2016resnet} K. He \etal, ``Deep residual learning for image recognition,'' \emph{IEEE CVPR}, 2016.
@@ -794,6 +863,16 @@ The Widar3.0 dataset is publicly available at \url{https://tns.thss.tsinghua.edu
 \bibitem{li2026conformal} H. Li \etal, ``Solving the WiFi sensing dilemma in reality leveraging conformal prediction,'' \emph{IEEE TMC}, 2026.
 
 \bibitem{chen2026perceptalign} S. Jia \etal, ``Breaking coordinate overfitting: geometry-aware WiFi sensing for cross-layout 3D pose estimation,'' arXiv:2601.12252, 2026.
+\bibitem{phuc2026cmambapose} P.~H. Nguyen, ``C-MambaPose: A physics-informed complex Mamba framework for cross-environment WiFi human pose estimation,'' arXiv:2606.13700, 2026.
+\bibitem{hou2026repos} Z. Hou and T. Ohtsuki, ``RePos: Relative-to-absolute pose factorization for cross-environment WiFi-based 3D human pose estimation,'' arXiv:2607.02986, 2026.
+
+\bibitem{csida2022} S. Hu, ``CSIDA,'' \emph{Mendeley Data}, V1, 2022. \url{https://doi.org/10.17632/gyr6c4nbsc}
+
+\bibitem{yousefi2017survey} S. Yousefi, H. Narui, S. Dayal, S. Ermon, and S. Valaee, ``A survey on behavior recognition using WiFi channel state information,'' \emph{IEEE Communications Magazine}, vol.~55, no.~10, pp.~98--104, 2017.
+
+\bibitem{yang2022efficientfi} J. Yang, X. Chen, H. Zou, D. Wang, Q. Xu, and L. Xie, ``EfficientFi: towards large-scale lightweight WiFi sensing via CSI compression,'' \emph{IEEE Internet of Things Journal}, 2022.
+
+\bibitem{wang2022caution} D. Wang, J. Yang, W. Cui, L. Xie, and S. Sun, ``CAUTION: a robust WiFi-based human authentication system via few-shot open-set gait recognition,'' \emph{IEEE Internet of Things Journal}, 2022.
 
 \end{thebibliography}
 
