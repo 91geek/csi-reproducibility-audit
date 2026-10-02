@@ -435,69 +435,103 @@ def fig2_variance_decomp():
 
 # ---------------- Fig 3 ----------------
 def fig3_mde_validation():
-    f42 = _load('f42_power_analysis.json')
-    # f42 结构：method_name -> {delta_pp, sd_pp, p, d, ci95, mde_pp, verdict}
-    pos = []
-    neg = []
-    for name, info in f42.items():
-        if 'delta_pp' not in info or 'verdict' not in info:
-            continue
-        d = abs(info['delta_pp'])
-        # 正面对照：B10/B15 真有效
-        if '真有效' in info['verdict']:
-            pos.append((name, d, info.get('mde_pp', 2.7)))
-        else:
-            neg.append((name, d, info.get('mde_pp', 2.7)))
+    """Fig 3: MDE self-validation — recomputed directly from the raw per-seed
+    JSONs with the SAME pairing as Fig 1, so that Fig 1 / Fig 3 / Table 1 /
+    Appendix C (tab:mde) all share one ground truth.
+    MDE uses the paper's pre-registered closed form:
+        MDE = (t_{alpha/2, n-1} + t_{beta, n-1}) * sigma / sqrt(n),
+        alpha = 0.05 (two-sided), power = 0.80.
+    Verdict (Corollary 1): power adequate iff |mean Delta| > MDE.
+    Also dumps fig3_mde_stats.json next to the figure for the LaTeX tables.
+    """
+    import json as _json
+    from scipy import stats as scs
 
-    neg_sorted = sorted(neg, key=lambda x: x[1])
-    pos_sorted = sorted(pos, key=lambda x: x[1])
+    f39 = _load('f39_antenna_ablation.json')
+    f34 = _load('f34_widar_orig_vs_f24.json')
+    f32 = _load('f32_multiseed.json')
+    f35 = _load('f35_snapshot_ensemble.json')
+    f37 = _load('f37_dann.json')
+    f33 = _load('f33_rx_vs_ms.json')
+    f40 = _load('f40_mmfi_ablation.json')
+    f43 = _load('f43_mmfi_multiscale.json')
+
+    FOLDS_W = [1, 3, 5, 6, 7, 9]
+    ENVS_M = [1, 2, 3, 4]
+
+    # (label, src_a, key_a, src_b, key_b, scope, scope_list, seeds)
+    pairs = [
+        ('C1: MHA vs Conv. attn.', f32, 'lenet_attn_mha', f32, 'lenet_attn', 'W', FOLDS_W, [0, 1, 2]),
+        ('C2: Multi-scale vs Multi-Rx (Widar)', f33, 'multiscale', f39, 'multirx9', 'W', FOLDS_W, [0, 1, 2, 3, 4]),
+        ('C3: Snapshot x3 vs single', f35, 'snap3', f35, 'best', 'W', FOLDS_W, [0, 1, 2]),
+        ('C4: DANN vs source-only', f37, 'dann', f32, 'lenet_attn', 'W', FOLDS_W, [0, 1, 2]),
+        ('C5: Multi-Rx vs RMS-agg (Widar)', f39, 'multirx9', f39, 'rms_agg', 'W', FOLDS_W, [0, 1, 2, 3, 4]),
+        ('C6: Multi-Rx vs Widar-orig (Widar)', f34, 'F-21_hop8_rx', f34, 'Widar3.0_orig', 'W', FOLDS_W, [0, 1, 2]),
+        ('C7a: Multi-Rx vs RMS-agg (MMFi)', f40, 'multirx10', f40, 'rms_agg', 'M', ENVS_M, [0, 1, 2, 3, 4]),
+        ('C7b: Multi-scale vs RMS-agg (MMFi)', f43, 'multiscale', f40, 'rms_agg', 'M', ENVS_M, [0, 1, 2, 3, 4]),
+        ('C7c: Multi-scale vs Multi-Rx (MMFi)', f43, 'multiscale', f40, 'multirx10', 'M', ENVS_M, [0, 1, 2, 3, 4]),
+    ]
+
+    rows = []
+    for label, sa, ka, sb, kb, scope, de_list, seeds in pairs:
+        deltas = []
+        for d_e in de_list:
+            for s in seeds:
+                if scope == 'W':
+                    ka_k, kb_k = f'{ka}_d{d_e}_s{s}', f'{kb}_d{d_e}_s{s}'
+                else:
+                    ka_k, kb_k = f'{ka}_eE{d_e}_s{s}', f'{kb}_eE{d_e}_s{s}'
+                if ka_k in sa and kb_k in sb:
+                    deltas.append((sa[ka_k]['acc'] - sb[kb_k]['acc']) * 100)
+        if len(deltas) < 4:
+            continue
+        arr = np.array(deltas)
+        n = len(arr)
+        mean = arr.mean()
+        sd = arr.std(ddof=1)
+        mde = (scs.t.ppf(0.975, n - 1) + scs.t.ppf(0.80, n - 1)) * sd / np.sqrt(n)
+        adequate = abs(mean) > mde
+        rows.append({'label': label, 'mean_pp': mean, 'sd_pp': sd, 'n': n,
+                     'mde_pp': mde, 'power_adequate': bool(adequate)})
+
+    pos = [r for r in rows if r['power_adequate']]
+    neg = [r for r in rows if not r['power_adequate']]
+    neg_sorted = sorted(neg, key=lambda r: abs(r['mean_pp']))
+    pos_sorted = sorted(pos, key=lambda r: abs(r['mean_pp']))
 
     fig, ax = plt.subplots(figsize=(10, 4.6))
     y_neg = list(range(len(neg_sorted)))
     y_pos = list(range(len(neg_sorted), len(neg_sorted) + len(pos_sorted)))
 
-    # 短名映射
-    name_map = {
-        'B8 多头注意力 vs 卷积': 'MHA vs Conv',
-        'B9 多尺度 vs 多Rx': 'Multi-scale vs Multi-Rx',
-        'B12 Snapshot Ensemble': 'Snapshot ensemble',
-        'B13 DANN 域对抗': 'DANN (GRL)',
-        'B15 多Rx vs RMS聚合': 'Multi-Rx vs RMS-agg',
-        'B10 多Rx vs Widar原版 [正]': 'Multi-Rx vs Widar-orig',
-        'B17 多Rx (MMFi)': 'Multi-Rx (MMFi)',
-    }
-    name_neg = [name_map.get(n, n) for n, _, _ in neg_sorted]
-    name_pos = [name_map.get(n, n) for n, _, _ in pos_sorted]
+    bars_neg = ax.barh(y_neg, [abs(r['mean_pp']) for r in neg_sorted], color=NEUTRAL, alpha=0.85,
+                       edgecolor='black', linewidth=0.6, label='Below MDE (not distinguishable from noise)')
+    bars_pos = ax.barh(y_pos, [abs(r['mean_pp']) for r in pos_sorted], color=ACCENT, alpha=0.85,
+                       edgecolor='black', linewidth=0.6, label='Above MDE (power adequate)')
 
-    bars_neg = ax.barh(y_neg, [d for _, d, _ in neg_sorted], color=NEUTRAL, alpha=0.85,
-                       edgecolor='black', linewidth=0.6, label='Negative controls (failed)')
-    bars_pos = ax.barh(y_pos, [d for _, d, _ in pos_sorted], color=ACCENT, alpha=0.85,
-                       edgecolor='black', linewidth=0.6, label='Positive controls (effective)')
+    for bars, data in zip([bars_neg, bars_pos], [neg_sorted, pos_sorted]):
+        for bar, r in zip(bars, data):
+            ax.text(abs(r['mean_pp']) + 0.2, bar.get_y() + bar.get_height() / 2,
+                    f"|Δ={abs(r['mean_pp']):.2f} | MDE={r['mde_pp']:.2f} (n={r['n']})",
+                    va='center', fontsize=7.8)
 
-    # 在每个 bar 右侧标 MDE 阈值（虚线）
-    for bars, data_with_mde in zip([bars_neg, bars_pos], [neg_sorted, pos_sorted]):
-        for bar, (name, d, mde) in zip(bars, data_with_mde):
-            ax.text(d + 0.2, bar.get_y() + bar.get_height() / 2,
-                    f'Δ={d:.1f} | MDE={mde:.1f}', va='center', fontsize=7.8)
-
-    # 总体 MDE 参考线（用平均 MDE）
-    avg_mde = np.mean([m for _, _, m in neg_sorted + pos_sorted])
+    avg_mde = np.mean([r['mde_pp'] for r in rows])
     ax.axvline(avg_mde, color='red', linestyle=':', linewidth=1.2, alpha=0.7,
                label=f'Avg MDE ≈ {avg_mde:.1f}pp')
 
     ax.set_yticks(y_neg + y_pos)
-    ax.set_yticklabels(name_neg + name_pos, fontsize=8.5)
+    ax.set_yticklabels([r['label'] for r in neg_sorted] + [r['label'] for r in pos_sorted], fontsize=8.5)
     ax.set_xlabel('|Δ from baseline| (pp)')
 
-    ax.text(-0.30, 0.5, 'Negative\ncontrols', transform=ax.get_yaxis_transform(),
+    ax.text(-0.30, 0.5, 'Below\nMDE', transform=ax.get_yaxis_transform(),
             ha='right', va='center', fontsize=9, color=NEUTRAL, fontweight='bold')
     ax.text(-0.30, len(neg_sorted) + len(pos_sorted) / 2 - 0.5,
-            'Positive\ncontrols', transform=ax.get_yaxis_transform(),
+            'Above\nMDE', transform=ax.get_yaxis_transform(),
             ha='right', va='center', fontsize=9, color=ACCENT, fontweight='bold')
 
-    ax.set_xlim(0, max([d for _, d, _ in neg_sorted + pos_sorted]) * 1.45)
+    ax.set_xlim(0, max(abs(r['mean_pp']) + r['mde_pp'] for r in rows) * 1.30)
     ax.set_title('Fig. 3: MDE framework self-validation\n'
-                 '5/5 negative controls truly ineffective (|Δ|<MDE); 2/2 positive controls truly effective',
+                 f'{len(neg)}/{len(rows)} comparisons fall below their pre-registered MDE; '
+                 f'{len(pos)}/{len(rows)} cross it (C5, C6, C7b)',
                  fontsize=10)
     ax.legend(loc='lower right', framealpha=0.9)
     ax.grid(axis='x', linestyle=':', alpha=0.4)
@@ -506,6 +540,9 @@ def fig3_mde_validation():
     fig.savefig(out, bbox_inches='tight')
     plt.close(fig)
     print(f'  -> {out}')
+    with open(os.path.join(BVP_DIR, 'fig3_mde_stats.json'), 'w', encoding='utf-8') as fh:
+        _json.dump(rows, fh, indent=1, ensure_ascii=False)
+    print('  -> fig3_mde_stats.json')
 
 
 # ---------------- Fig 4 ----------------
