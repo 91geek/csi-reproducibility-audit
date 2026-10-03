@@ -1,0 +1,110 @@
+[
+  {
+    "label": "arxiv (main)",
+    "cwd": "F:\\python_workspace\\wifi识别\\wifi-crossenv-lab\\arxiv_submission",
+    "tex": "paper_arxiv.tex",
+    "passes": [
+      {
+        "p": 1,
+        "returncode": 0,
+        "stdout_tail": "mf-dist/fonts/type1/public/cm-super/sfrm1728.pfb><c:/texlive/2026/texmf-dist\n/fonts/type1/public/cm-super/sfti0800.pfb><c:/texlive/2026/texmf-dist/fonts/typ\ne1/public/cm-super/sfti1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/\ncm-super/sfti1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/s\nftt0800.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1095.pf\nb>\nOutput written on paper_arxiv.pdf (47 pages, 2489559 bytes).\nTranscript written on paper_arxiv.log.\n",
+        "stderr_tail": ""
+      },
+      {
+        "p": 2,
+        "returncode": 0,
+        "stdout_tail": "mf-dist/fonts/type1/public/cm-super/sfrm1728.pfb><c:/texlive/2026/texmf-dist\n/fonts/type1/public/cm-super/sfti0800.pfb><c:/texlive/2026/texmf-dist/fonts/typ\ne1/public/cm-super/sfti1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/\ncm-super/sfti1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/s\nftt0800.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1095.pf\nb>\nOutput written on paper_arxiv.pdf (47 pages, 2489559 bytes).\nTranscript written on paper_arxiv.log.\n",
+        "stderr_tail": ""
+      },
+      {
+        "p": 3,
+        "returncode": 0,
+        "stdout_tail": "mf-dist/fonts/type1/public/cm-super/sfrm1728.pfb><c:/texlive/2026/texmf-dist\n/fonts/type1/public/cm-super/sfti0800.pfb><c:/texlive/2026/texmf-dist/fonts/typ\ne1/public/cm-super/sfti1000.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/\ncm-super/sfti1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/s\nftt0800.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1095.pf\nb>\nOutput written on paper_arxiv.pdf (47 pages, 2489559 bytes).\nTranscript written on paper_arxiv.log.\n",
+        "stderr_tail": ""
+      }
+    ],
+    "final": {
+      "n_err_blocks": 0,
+      "n_undefined_warn": 0,
+      "n_overfull_hbox": 0,
+      "n_overfull_vbox": 0,
+      "n_underfull_hbox": 0,
+      "n_underfull_vbox": 0,
+      "n_line_errs": 0,
+      "err_blocks_first3": [],
+      "undefined_first3": []
+    }
+  },
+  {
+    "label": "TMC (compression)",
+    "cwd": "F:\\python_workspace\\wifi识别\\wifi-crossenv-lab\\arxiv_submission",
+    "tex": "paper_tmc.tex",
+    "passes": [
+      {
+        "p": 1,
+        "returncode": 0,
+        "stdout_tail": "ls/msam10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/pu\nblic/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/co\nurier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><\nc:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/t\nexmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/ty\npe1/urw/times/utmri8a.pfb>\nOutput written on paper_tmc.pdf (15 pages, 1896932 bytes).\nTranscript written on paper_tmc.log.\n",
+        "stderr_tail": ""
+      },
+      {
+        "p": 2,
+        "returncode": 0,
+        "stdout_tail": "ls/msam10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/pu\nblic/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/co\nurier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><\nc:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/t\nexmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/ty\npe1/urw/times/utmri8a.pfb>\nOutput written on paper_tmc.pdf (15 pages, 1896932 bytes).\nTranscript written on paper_tmc.log.\n",
+        "stderr_tail": ""
+      },
+      {
+        "p": 3,
+        "returncode": 0,
+        "stdout_tail": "ls/msam10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/pu\nblic/amsfonts/symbols/msbm10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/co\nurier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><\nc:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/t\nexmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/ty\npe1/urw/times/utmri8a.pfb>\nOutput written on paper_tmc.pdf (15 pages, 1896932 bytes).\nTranscript written on paper_tmc.log.\n",
+        "stderr_tail": ""
+      }
+    ],
+    "final": {
+      "n_err_blocks": 0,
+      "n_undefined_warn": 0,
+      "n_overfull_hbox": 0,
+      "n_overfull_vbox": 0,
+      "n_underfull_hbox": 0,
+      "n_underfull_vbox": 0,
+      "n_line_errs": 0,
+      "err_blocks_first3": [],
+      "undefined_first3": []
+    }
+  },
+  {
+    "label": "paper B (CSIconv protocol spec)",
+    "cwd": "F:\\python_workspace\\wifi识别\\wifi-crossenv-lab\\arxiv_submission_b",
+    "tex": "paper_arxiv_b.tex",
+    "passes": [
+      {
+        "p": 1,
+        "returncode": 0,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      {
+        "p": 2,
+        "returncode": 0,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      },
+      {
+        "p": 3,
+        "returncode": 0,
+        "stdout_tail": "",
+        "stderr_tail": ""
+      }
+    ],
+    "final": {
+      "n_err_blocks": 0,
+      "n_undefined_warn": 0,
+      "n_overfull_hbox": 0,
+      "n_overfull_vbox": 0,
+      "n_underfull_hbox": 0,
+      "n_underfull_vbox": 0,
+      "n_line_errs": 0,
+      "err_blocks_first3": [],
+      "undefined_first3": []
+    }
+  }
+]

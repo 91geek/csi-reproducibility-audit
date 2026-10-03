@@ -1,0 +1,48 @@
+pineau2021	arxiv,b,tmc	J. Pineau \etal, ``Improving reproducibility in machine learning research,'' \emph{JMLR}, 2021.
+zhang2026sdp	arxiv,b,tmc	D. Zhang \etal, ``SDP: A unified protocol and benchmarking framework for reproducible wireless sensing,'' arXiv:2601.08463, 2026.
+woo2018cbam	arxiv,b,tmc	S. Woo \etal, ``CBAM: Convolutional block attention module,'' \emph{ECCV}, 2018.
+he2016resnet	arxiv,b,tmc	K. He \etal, ``Deep residual learning for image recognition,'' \emph{IEEE CVPR}, 2016.
+dasilva2026pss	arxiv,b,tmc	R. da Silva and K. Monahan, ``Quantifying protocol-induced uncertainty in comparative predictive-model evaluation: evidence from large-scale daily PM10 forecasting,'' arXiv:2609.26288, 2026.
+li2026conformal	arxiv,b,tmc	H. Li \etal, ``Solving the WiFi sensing dilemma in reality leveraging conformal prediction,'' \emph{IEEE TMC}, 2026.
+chen2026perceptalign	arxiv,b,tmc	S. Jia \etal, ``Breaking coordinate overfitting: geometry-aware WiFi sensing for cross-layout 3D pose estimation,'' arXiv:2601.12252, 2026.
+zheng2019widar	arxiv,tmc	Y. Zheng \etal, ``WiFi CSI-based human activity recognition via body-coordinate velocity profiles,'' \emph{IEEE TPAMI}, 2019.
+wang2022csi	arxiv,tmc	Z. Wang \etal, ``A survey on CSI-based human sensing,'' \emph{IEEEXplore}, 2022.
+sheng2020	arxiv,tmc	T. Sheng \etal, ``Domain adversarial training for WiFi-CSI gesture recognition,'' \emph{IEEE INFOCOM}, 2020.
+zhang2021	arxiv,tmc	J. Zhang \etal, ``AttnSense: Multi-head attention for CSI gesture recognition,'' \emph{IEEE TMC}, 2021.
+ma2022	arxiv,tmc	Y. Ma \etal, ``Self-supervised pretraining for WiFi sensing,'' \emph{IEEE IoT-J}, 2022.
+xie2023	arxiv,tmc	Q. Xie \etal, ``Multimodal CSI fusion for gesture recognition,'' \emph{IEEE TMC}, 2023.
+sculley2018	arxiv,tmc	D. Sculley \etal, ``Winner's curse? On pace, progress, and empirical rigor,'' \emph{ICLR Workshop}, 2018.
+henderson2018	arxiv,tmc	P. Henderson \etal, ``Deep reinforcement learning that matters,'' \emph{AAAI}, 2018.
+colas2018	arxiv,tmc	F. Colas \etal, ``A pitfall of experimental design in deep RL,'' \emph{ICML Workshop}, 2018.
+dror2018	arxiv,tmc	R. Dror \etal, ``The hitchhiker's guide to testing statistical significance in natural language processing,'' \emph{ACL}, 2018.
+arjovsky2019irm	arxiv,tmc	M. Arjovsky, L. Bottou, I. Gulrajani, and D. Lopez-Paz, ``Invariant risk minimization,'' \emph{arXiv:1907.02893}, 2019.
+bouthillier2021	arxiv,tmc	X. Bouthillier \etal, ``Accounting for variance in machine learning benchmarks,'' \emph{MLSys}, 2021.
+guarino2026	arxiv,tmc	I. Guarino \etal, ``A survey on CSI-based Wi-Fi sensing datasets and models with a focus on reproducibility,'' \emph{Computer Communications}, 249:108431, 2026.
+wang2026survey	arxiv,tmc	F. Wang \etal, ``A survey on Wi-Fi sensing generalizability: taxonomy, techniques, datasets, and future research prospects,'' \emph{IEEE COMST}, 28:5227--5266, 2026.
+zhang2017rexart	arxiv,tmc	C. Zhang \etal, ``Understanding deep learning requires rethinking generalization,'' \emph{ICLR}, 2017.
+arpit2017	arxiv,tmc	D. Arpit \etal, ``A closer look at memorization in deep networks,'' \emph{ICML}, 2017.
+yang2023sensefi	arxiv,tmc	J. Yang \etal, ``SenseFi: A library and benchmark on deep-learning-empowered WiFi human sensing,'' \emph{Patterns}, 4(3):100703, 2023.
+sterzinger2026datta	arxiv,tmc	J. Strohmayer \etal, ``DATTA: Domain-adversarial test-time adaptation for cross-domain WiFi-based human activity recognition,'' \emph{WACV}, 2026.
+cohen2026ruview	arxiv,tmc	R. Cohen, ``RuView: An open-source ESP32-mesh WiFi sensing stack,'' GitHub, 2026.
+zhu2025csibench	arxiv,tmc	G. Zhu \etal, ``CSI-Bench: A large-scale in-the-wild dataset for multi-task WiFi sensing,'' \emph{NeurIPS Datasets \& Benchmarks}, 2025.
+wu2021	arxiv,tmc	D. Wu \etal, ``WiTraj: Robust indoor motion tracking with WiFi signals,'' \emph{IEEE TMC}, 22(5):3062--3078, 2023.
+yang2023mmfi	arxiv,tmc	J. Yang \etal, ``MMFi: Multi-modal WiFi sensing dataset,'' \emph{IEEE TMC}, 2023.
+vassallo2025time	arxiv,tmc	A. Brunello \etal, ``Time matters: Empirical insights into the limits and challenges of temporal generalization in CSI-based Wi-Fi sensing,'' \emph{Internet of Things}, 32:101634, 2025.
+csida2022	arxiv,tmc	S. Hu, ``CSIDA,'' \emph{Mendeley Data}, V1, 2022. \url{https://doi.org/10.17632/gyr6c4nbsc}
+kim2026wifijepa	arxiv	D. Kim, J. Lee, S.~S. Kim, and S.-H. Kim, ``WiFi-JEPA: Self-supervised learning for WiFi-CSI 3D human pose estimation,'' arXiv:2607.11064, \emph{ECCV}, 2026.
+zhu2026amfm	arxiv	G. Zhu, Y. Hu, S. Jayaweera, W. Gao, W.-H. Wang, J. Zhang, B. Wang, C. Wu, and K.~J.~R. Liu, ``AM-FM: A foundation model for ambient intelligence through WiFi,'' arXiv:2602.11200, 2026.
+phuc2026cmambapose	arxiv	P.~H. Nguyen, ``C-MambaPose: A physics-informed complex Mamba framework for cross-environment WiFi human pose estimation,'' arXiv:2606.13700, 2026.
+hou2026repos	arxiv	Z. Hou and T. Ohtsuki, ``RePos: Relative-to-absolute pose factorization for cross-environment WiFi-based 3D human pose estimation,'' arXiv:2607.02986, 2026.
+yousefi2017survey	arxiv	S. Yousefi, H. Narui, S. Dayal, S. Ermon, and S. Valaee, ``A survey on behavior recognition using WiFi channel state information,'' \emph{IEEE Communications Magazine}, vol.~55, no.~10, pp.~98--104, 2017.
+yang2022efficientfi	arxiv	J. Yang, X. Chen, H. Zou, D. Wang, Q. Xu, and L. Xie, ``EfficientFi: towards large-scale lightweight WiFi sensing via CSI compression,'' \emph{IEEE Internet of Things Journal}, 2022.
+wang2022caution	arxiv	D. Wang, J. Yang, W. Cui, L. Xie, and S. Sun, ``CAUTION: a robust WiFi-based human authentication system via few-shot open-set gait recognition,'' \emph{IEEE Internet of Things Journal}, 2022.
+roy2007	tmc	O. Roy and M. Vetterli, ``The effective rank of a noisy broadband mode,'' \emph{IEEE ICASSP}, 2007.
+wang2018glue	b	A.~Wang, A.~Singh, J.~Michael, F.~Hill, O.~Levy, and S.~R.~Bowman. \newblock {GLUE}: A multi-task benchmark and analysis platform for natural language understanding. \newblock In {\em EMNLP Workshop BlackboxNLP}, 2018.
+mattson2020mlperf	b	P.~Mattson, C.~Cheng, C.~Coleman, et al. \newblock {MLPerf} training benchmark. \newblock In {\em MLSys}, 2020.
+gulrajani2021domainbed	b	I.~Gulrajani and D.~Lopez-Paz. \newblock In search of lost domain generalization. \newblock In {\em ICLR}, 2021.
+zheng2019widar3	b	Y.~Zheng, Y.~Zhang, K.~Qian, et al. \newblock {Widar3.0}: Zero-effort cross-domain gesture recognition with Wi-Fi. \newblock {\em IEEE TPAMI}, 41(10):2471--2485, 2019.
+yang2022mmfi	b	J.~Yang, H.~Huang, Y.~Zhou, et al. \newblock {mm-Fi}: Multi-modal non-intrusive 4D human sensing over commodity WiFi. \newblock In {\em MobiSys}, 2022.
+liu2025widar	b	R.~Liu, C.~Pan, J.~Zeng, H.~Ren, K.~Wang, L.~Kong, and J.~Wang. \newblock {WiFi-based Cross-Domain Gesture Recognition Using Attention Mechanism}. \newblock arXiv:2512.04521, 2025.
+cohen1988	b	J.~Cohen. \newblock {\em Statistical Power Analysis for the Behavioral Sciences}. \newblock Lawrence Erlbaum Associates, 2nd edition, 1988.
+demsar2006	b	J.~Dem\v{s}ar. \newblock Statistical comparisons of classifiers over multiple data sets. \newblock {\em JMLR}, 7:1--30, 2006.
+mcdermott2021	b	M.~B.~A.~McDermott, S.~Wang, N.~Marin, et al. \newblock Reproducibility in machine learning for health research: still a long way to go. \newblock {\em Nature MI}, 3(4):e461--e467, 2021.
