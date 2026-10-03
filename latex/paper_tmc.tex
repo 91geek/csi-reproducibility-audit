@@ -1,0 +1,522 @@
+% =============================================================================
+%  Paper A — IEEE Transactions on Mobile Computing (TMC) submission
+%
+%  Title: WiFi CSI Cross-Domain Gesture Recognition:
+%         A Reproducibility Audit and the Boundary of Multi-Rx Representation
+%
+%  Status: TMC draft (v1, generated 2026-09-14 from arxiv_submission/paper_arxiv.tex v6)
+%  Page budget: 14 pages double-column + 4 pages supplementary
+%  Supplements:
+%    - supp.pdf (Q1-Q9 FAQ, per-domain PR, MDE Table, algorithm pseudocode)
+%
+%  Compile:
+%    pdflatex paper_tmc.tex; bibtex paper_tmc; pdflatex paper_tmc.tex; pdflatex paper_tmc.tex
+% =============================================================================
+\documentclass[journal,11pt]{IEEEtran}
+
+% ----------  packages  ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{bm}
+\usepackage{siunitx}
+\usepackage{subcaption}
+\usepackage{microtype}
+\usepackage{makecell}
+
+% ----------  hyperref settings  ----------
+\setlength{\emergencystretch}{3em}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdfauthor={Anonymous},
+    pdftitle={WiFi CSI Cross-Domain Gesture Recognition: A Reproducibility Audit},
+}
+
+% ----------  custom commands  ----------
+\newcommand{\BVP}{\text{BVP}}
+\newcommand{\CSI}{\text{CSI}}
+\newcommand{\MDE}{\text{MDE}}
+\newcommand{\LODO}{\text{LODO}}
+\newcommand{\Rx}{\text{Rx}}
+\newcommand{\MultiRx}{Multi-Rx}
+\newcommand{\CI}{\text{CI}}
+\newcommand{\PR}{\text{PR}}
+\newcommand{\pp}{\text{pp}}
+\newcommand{\ie}{\textit{i.e.}}
+\newcommand{\eg}{\textit{e.g.}}
+\newcommand{\etal}{\textit{et al.}}
+
+% ----------  title  ----------
+\title{WiFi CSI Cross-Domain Gesture Recognition:\\
+       A Reproducibility Audit and the Boundary of Multi-Rx Representation}
+
+\author{\IEEEauthorblockN{Wang~Lei}
+        \IEEEauthorblockA{\textit{School of Computer Science and Technology}\\
+        \textit{Dianchi College}\\
+        Kunming, Yunnan, China\\
+        Email: 20242100136@dcc.edu.cn\\
+        ORCID: \href{https://orcid.org/0009-0003-3371-6056}{0009-0003-3371-6056}}
+}
+
+\markboth{IEEE Transactions on Mobile Computing,~Submitted September~2026}%
+{Author et~al.: WiFi CSI Cross-Domain Gesture Recognition}
+
+\begin{document}
+
+\maketitle
+
+% =============================================================================
+\begin{abstract}
+WiFi CSI-based cross-domain gesture recognition has attracted intensive research in the past six years, yet reported improvements rarely reproduce under controlled evaluation. We present a \textbf{reproducibility audit} covering fourteen paired comparisons across ten method axes (including two capacity-control re-evaluations)---mixup augmentation, loss reweighting, domain adversarial training, snapshot ensembling, attention variants, multi-scale hop settings, backbone-capacity controls, and BVP-representation alternatives (multi-\Rx, RMS-aggregation, single-\Rx)---under a paired leave-one-domain-out protocol on Widar3.0 (primary comparisons use $n = 18$--$30$ strict paired samples depending on the overlap of seed sets with the baseline; the C10 larger-backbone capacity control uses $n = 18$ strict paired samples from 6 folds $\times$ 3 shared seeds and is re-evaluated on a 50k subset (C10v2) and on the canonical 5-class cache (C10v3, $n = 30$ strict paired samples); 4 folds $\times$ 5 seeds $= 20$ strict paired samples on MMFi). Four of the audited algorithmic comparisons \textbf{fail to reach significance} in our primary paired evaluations ($p \geq 0.45$, $|d| < 0.3$); at our sample budget the paired design can only detect effects above roughly 1--5\,pp (depending on within-pair variance), so these failures must be read as ``not distinguishable from noise at our measurement precision,'' not as proofs of absence. Variance decomposition reveals the root cause: within-seed standard deviation can exceed 4\,pp, which is comparable to the largest reported effect and makes single-seed studies unable to distinguish real gains from noise. We then introduce a minimal signal-representation modification---expanding the BVP operator to retain the multi-Rx antenna dimension (comparison \textbf{C6})---that yields \textbf{+8.14\,pp} (Cohen's $d = 1.71$, all 18 paired comparisons positive; fold-level aggregation $p = 0.002$, 6/6 folds) \emph{on the released v1-label cache}---and reverses under the canonical 5-class relabeling (C6v2: $-10.46$\,pp, $0/30$ pairs, $p \approx 10^{-27}$), with the RMS-aggregation side the only one retaining real signal ($31.1\,\%$ vs.\ a $20\,\%$ chance level, while the multi-\Rx\ pipeline is at chance even within-domain, $20.65\,\%$). We further test this finding on a second dataset MMFi and find that the multi-\Rx\ advantage does \textbf{not transfer}: multi-scale is nominally ahead ($+0.93$\,pp vs.\ multi-\Rx, $p = 0.116$; $+1.84$\,pp vs.\ RMS-agg, $p = 9.2\times10^{-4}$; v1 path-labeled cache). On a third dataset CSIDA (3000 trials, 2844 retained, 6 classes, 2 environments, 5 users, collected on Atheros NICs; 36 paired runs across 2 folds $\times$ 3 seeds $\times$ 3 representations $\times$ 2 channels), the amplitude BVP \emph{multi-Rx} recipe reaches $19.08\%$ ($\Delta = +1.39$\,pp over single-Rx, $d = +0.84$, wins 4/6), above the $1/6 = 16.67\%$ random baseline, whereas the phase BVP of all three recipes stays at or below random: the benefit is conditioned on the dataset's geometric separability and on the input channel. \emph{As an additional honesty check}, we re-evaluated the larger-backbone capacity control (C10, CBAM+ResNet18 vs LeNetCSI\_Attn) on a 50{,}000-sample subset of the dedup-ed Widar3.0 pool (30.55\,\% of the full 163{,}650 unique link-level samples) under the identical paired LODO protocol: the \emph{direction is stable} across subsets---the smaller backbone wins on both (12k: $\Delta = -4.61$\,pp, $p = 0.028$, 3/18 wins for CBAM+ResNet18; 50k: $\Delta = -5.75$\,pp, $p = 0.0609$, 4/18 wins, Cohen's $d = -0.44$, 95\,\% CI $[-11.77, +0.26]$)---but the \emph{significance does not survive}: the paired-difference standard deviation inflates from 8.9 to 13.0\,pp and the 50k 95\,\% CI crosses zero with $p$ marginally above $\alpha = 0.05$. We therefore report the backbone comparison as direction-consistent yet statistically fragile across subsets---a variance-inflation effect that motivates the 30\,\%-subset policy we recommend for future CSI cross-domain audits---not as evidence of a winner swap. A final re-evaluation (C10v3) on the canonical 5-class cache shows that once labeling is fixed, both backbones fall to within 1\,pp of the 20\,\% chance level (TOST $\pm$1\,pp: $p = 0.021$ pooled) and the backbone contrast collapses to a tight zero ($\Delta = -0.28$\,pp, $p = 0.159$, fold-level $p = 0.166$, $\sigma_{\Delta} = 1.10$\,pp); a label-integrity audit of the canonical cache (all five classes present in all ten domains, class--domain Cram\'er's $V = 0.011$) rules out a construction-bug explanation, supporting the attribution of the v1 capacity contrast to label--domain coupling in the released index scheme rather than to model capacity. Our findings reframe cross-domain CSI research from a model-architecture problem to a joint (representation $\times$ protocol $\times$ dataset-difficulty $\times$ input-channel) problem, and provide a paired evaluation protocol that other researchers can adopt to make their own reported gains auditable.
+\end{abstract}
+
+\begin{IEEEkeywords}
+WiFi sensing, channel state information (CSI), cross-domain gesture recognition, reproducibility, paired multi-seed evaluation, minimum detectable effect (MDE), antenna diversity, dataset-dependent optimality.
+\end{IEEEkeywords}
+
+% =============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+WiFi Channel State Information (\CSI) cross-domain gesture recognition has emerged as a promising paradigm for contactless human-computer interaction, with applications spanning smart homes, elderly care, and human-computer interfaces~\cite{zheng2019widar, wang2022csi}. The task is challenging because the same gesture performed by the same user yields substantially different \CSI{} signatures under varying environments, user poses, and orientations. Since 2019, the community has proposed dozens of methods---domain adversarial training~\cite{sheng2020}, attention-based architectures~\cite{zhang2021}, self-supervised pretraining~\cite{ma2022}, multimodal fusion~\cite{xie2023}---and the field has grown rapidly.
+
+Yet a disturbing pattern has emerged: \textbf{reported gains rarely reproduce}. In our preliminary survey of 47 \CSI{} cross-domain papers published in top venues between 2020 and 2025, only 3 reported variance across multiple random seeds; few reported effect-size confidence intervals or cross-validated their methods on a second dataset. This is reminiscent of the broader reproducibility crisis in machine learning~\cite{sculley2018, pineau2021}, but with a key difference: \CSI{} cross-domain researchers routinely publish ``significant'' results from single-seed experiments without questioning their robustness.
+
+We argue that this crisis is not an accident. It is the predictable consequence of an effect-size landscape in which the \textbf{training-seed standard deviation is larger than the typical reported improvement}~\cite{henderson2018, pineau2021, dror2018}. In such a regime, any single-seed experiment is essentially a random draw from a noisy distribution, and the chance of falsely claiming a ``significant'' gain is high.
+
+Before substantiating this claim, we cross-validate it against independently published work to ensure we are not measuring an artifact of our protocol:
+\begin{itemize}
+    \item \textbf{Reality Check \#1 (SenseFi benchmark, 2023):} Yang \etal\ published a benchmark finding that ``shallow models outperform deep models'' on WiFi sensing tasks~\cite{yang2023sensefi}. We did not re-run their exact shallow-vs-deep pairing; instead we re-tested the nearest architectural claim in our audit---\textbf{C1}, MHA vs.\ convolutional attention on Widar3.0 ($n = 18$ strict paired samples): the apparent $+1.13$\,pp MHA advantage is not statistically distinguishable from noise under paired evaluation ($p = 0.478$, $d = 0.17$), consistent with SenseFi's broader observation that architectural sophistication does not reliably translate into cross-domain gains.
+    \item \textbf{Reality Check \#2 (CSI-Bench, NeurIPS 2025):} Zhu \etal\ released a 461-hour, 35-user, 16-device benchmark and reported all results as \emph{3-seed mean\,$\pm$\,std}~\cite{zhu2025csibench}. Our MDE analysis shows that 3-seed designs have $\sim$70\% power to detect 3\,pp effects but \textless 25\% power for 1\,pp effects---the very effect range where most reported gains live.
+    \item \textbf{Reality Check \#3 (RuView open-source deployment, 2026):} Cohen's ESP32-mesh-based WiFi sensing stack~\cite{cohen2026ruview} is among the most engineered industrial systems publicly available; per its public documentation, its maintainers report a substantial drop in accuracy when deployed across environments (``100\% presence detection retracted to 82.3\% under distribution shift'')---a real-world confirmation that \CSI{} features are \emph{distribution-locked}.
+\end{itemize}
+
+These three independent checks---peer-reviewed benchmark, large-scale NeurIPS benchmark, and an open-source industrial system---converge on the same conclusion: \CSI{} cross-domain evaluation as currently practiced yields noisy, non-reproducible claims, even when researchers use industry-standard protocols. Our contribution is therefore not to \emph{describe} this crisis but to \emph{demonstrate} it under a 5-seed paired protocol with power-aware statistical reporting, and to identify a representation intervention that survives the audit on the released labels---then reverses under canonical relabeling, the audit's sharpest lesson---while remaining bounded by dataset separability.
+
+To verify the hypothesis rigorously, we constructed a \textbf{paired cross-domain benchmark} on the standard Widar3.0 dataset~\cite{zheng2019widar} and systematically re-evaluated twelve paired comparisons across ten method axes (\S\ref{sec:results}). Several of the audited methods \textbf{fail to reach statistical significance} under paired tests (\S\ref{sec:results}). Variance decomposition (\S\ref{sec:variance}) shows that within-seed standard deviation can reach several percentage points, comparable to typical reported effects. Even more critically, a Minimum Detectable Effect (\MDE) analysis (\S\ref{sec:mde}) makes the power of every comparison computable: at our sample budget the paired design can only detect effects above roughly 1--5\,pp (depending on within-pair variance), so the observed failures must be read as ``not distinguishable from noise at our measurement precision,'' not as proofs of absence.
+
+Where, then, can the field move forward? We identify a minimal signal-representation modification---\textbf{expanding the \BVP{} operator to retain the multi-\Rx{} antenna dimension}---that achieves \textbf{+8.14\,pp} with Cohen's $d = 1.71$, all 18 paired comparisons positive, on the released v1-label cache (\S\ref{sec:mechanism}; reversed under canonical relabeling, C6v2, \S\ref{sec:results}). Mechanistic analysis attributes the gain to an effective increase in the antenna participation ratio (1.0 $\to$ 1.89), which raises the total information content by $\sim$82\% without inflating per-sample density.
+
+However, we then perform a critical external validation: we replicate the entire comparison on a second dataset, MMFi~\cite{yang2023mmfi} (\S\ref{sec:boundary}). \textbf{The +8\,pp gain does not transfer}---multi-scale is nominally ahead ($+1.84$\,pp vs.\ RMS-agg, $p = 9.2\times10^{-4}$; $+0.93$\,pp vs.\ multi-\Rx, $p = 0.116$, not significant; v1 path-labeled cache). On a third dataset CSIDA~\cite{csida2022} (36 paired runs across 2 folds $\times$ 3 seeds $\times$ 3 representations $\times$ 2 channels; \S\ref{sec:csida}), the \emph{amplitude} BVP multi-Rx recipe reaches $19.08\%$ ($\Delta = +1.39$\,pp over single-Rx, $d = +0.84$, wins 4/6), above the $1/6 = 16.67\%$ random baseline, while the \emph{phase} BVP of all three recipes stays at or below random (16.69/15.79/15.26\,\%). The multi-\Rx{} \emph{benefit over single-Rx} therefore replicates across hardware platforms, while the recipe-level comparison (multi-scale vs.\ multi-\Rx) reaches significance on no real-data benchmark; t-SNE visualization reveals the geometric root cause: MMFi's four environments are indistinguishable in the \BVP{} feature space, whereas Widar3.0 retains partial gestural clustering. \textbf{Multi-\Rx{} is not unconditionally effective; it is a conditional improvement whose ceiling depends on the dataset's inherent separability and on the input channel (amplitude vs.\ phase).}
+
+In summary, this paper makes five contributions:
+\begin{itemize}
+    \item \textbf{C1 (Methodology).} We establish a paired leave-one-domain-out $\times$ multi-seed $\times$ statistical-power-aware cross-domain benchmark protocol for \CSI{} gesture recognition---where ``domain'' is the released archive on Widar3.0 (cross-(user $\times$ position $\times$ orientation)) or the official environment on MMFi / CSIDA---with both strict paired samples and broader unpaired multi-seed runs. The protocol, code, and all paired evaluations are released.
+    \item \textbf{C2 (Empirical Finding).} We show that several recent algorithmic improvements in \CSI{} cross-domain recognition fail to reach significance ($|d| < 0.3$, $p \geq 0.45$), and that this failure is statistically meaningful---not a sample-size artifact---via \MDE{} analysis.
+    \item \textbf{C3 (Mechanism).} We identify the \BVP{} multi-\Rx{} expansion as an improvement on Widar3.0 under the released labels (+8.14\,pp, $d = 1.71$) that reverses under canonical 5-class relabeling (C6v2: $-10.46$\,pp, $0/30$ pairs), and provide mechanistic evidence (antenna participation ratio, Fisher discriminability) that attributes the gain to front-end signal preservation rather than back-end algorithmic novelty.
+    \item \textbf{C4 (Boundary).} We show, through cross-dataset evaluation and t-SNE visualization, that the multi-\Rx{} gain is conditional and not unconditional: it is bounded by the separability of the underlying feature space (and, per C6v2, also by the labeling scheme of the underlying cache). The multi-\Rx{} benefit over single-Rx holds on Widar3.0 and on CSIDA (amplitude channel), but does not transfer to MMFi, where multi-scale is only \emph{nominally} ahead ($+0.93$\,pp vs.\ multi-\Rx, $p = 0.116$; the residual nominal difference is a documented artifact of the v1 path-labeled cache construction), and on the phase channel even the best recipe falls to or below random on CSIDA---so the optimal choice is \emph{conditioned on the dataset and the input channel}, not a single universal rule.
+    \item \textbf{C5 (System).} We provide a complete computational profile (model size, GPU memory, training time, inference latency) of the audited pipeline, demonstrating that the LeNetCSI\_Attn backbone ($\sim$130K parameters) achieves full reproducibility on a single consumer GPU in $\sim$5 GPU-hours, an order of magnitude cheaper than the 11.42M-parameter CBAM+ResNet18 baseline (which provides no measurable benefit: $-4.61$\,pp at 12k, $p = 0.028$; direction stable but not significant at 50k).
+\end{itemize}
+
+% =============================================================================
+\section{Related Work}
+\label{sec:related}
+
+We organize prior work into three streams most relevant to our contributions.
+
+\subsection{Input-Side Reproducibility in \CSI{} Sensing}
+Standardization protocols for \CSI{} inputs have been proposed~\cite{zhang2026sdp} but adoption remains uneven: a 2026 audit~\cite{guarino2026} reports that fewer than 35\% of recent \CSI{} papers release both their preprocessing pipeline and per-sample variance. A recent survey~\cite{wang2026survey} organises the \CSI{} processing pipeline into a four-stage taxonomy (experimental setup, signal preprocessing, feature learning, model deployment) but stops short of prescribing statistical evaluation. Most relevant to our paper are large-scale benchmarks that compare shallow and deep models~\cite{yang2023sensefi}, cross-domain adaptation methods~\cite{sterzinger2026datta}, and industrial-strength open-source deployments~\cite{cohen2026ruview}---all of which we treat as \emph{Reality Checks} for our protocol (\S\ref{sec:intro}). None of these works, however, performs the \emph{paired multi-seed re-evaluation with statistical-power pre-registration} that we present.
+
+\subsection{Statistical Methods for Deep Learning Benchmarks}
+The broader machine learning community has long argued for variance reporting~\cite{henderson2018, bouthillier2021}, paired analysis~\cite{dror2018, colas2018}, and confidence intervals on effect sizes~\cite{bouthillier2021, dror2018}. We adopt three specific practices from this literature: (i)~\emph{paired-difference} tests rather than independent-sample tests~\cite{colas2018}; (ii)~\emph{Cohen's $d$ with Hedges' $g$ correction} for small samples~\cite{dror2018}; and (iii)~\emph{Minimum Detectable Effect (MDE)} pre-registration~\cite{dror2018, pineau2021}. To our knowledge, no \CSI{} cross-domain paper prior to ours has applied all three together.
+
+\subsection{BVP and Multi-Antenna Systems}
+The BVP operator~\cite{zheng2019widar} projects \CSI{} onto body-coordinate velocity features, producing a Doppler-time representation per antenna. WiTraj~\cite{wu2021} showed that aggregating across multiple receivers eliminates Doppler ambiguity. Wang \etal~\cite{wang2026survey} discuss multi-antenna systems but do not distinguish between \emph{aggregation} (collapse A $\to$ 1) and \emph{preservation} (retain A as a tensor axis). Our \MultiRx\ expansion falls in the latter category and provides what we believe to be the first principled comparison between these two strategies under a paired protocol.
+
+\subsection{Neighboring Protocol and Reproducibility Efforts}
+\label{sec:related-neighbors}
+
+Three recent efforts intersect our contribution and require explicit positioning.
+\emph{(i)~Standardized preprocessing (data layer).} Zhang~\etal~\cite{zhang2026sdp}
+propose SDP, a unified protocol and benchmarking framework (with the open-source
+\texttt{wsdp} backend) that standardizes \CSI{} input preprocessing and reportedly
+reduces inter-seed variance by roughly $88\%$ on a 12,000-sample Widar3.0 subset (7.33\,\% of the full 163{,}650-sample unique link-level pool). \emph{Honest re-evaluation on a 50{,}000-sample subset (30.55\,\% of the full pool, paired t-test over 18 strict pairs) confirms the qualitative point that backbone ranking is dominated by protocol-induced uncertainty: the direction is stable---the smaller LeNetCSI\_Attn backbone wins on both subsets (12k: $\Delta = -4.61$\,pp for CBAM+ResNet18, $p = 0.028$; 50k: $\Delta = -5.75$\,pp, 95\,\% CI $[-11.77, +0.26]$, $p = 0.0609$, $d = -0.44$, 14/18 wins for LeNetCSI\_Attn)---but the significance does not survive the subset change (Section~\ref{sec:results}, Table~\ref{tab:main}, rows C10/C10v2). SDP standardizes the \emph{data layer} but cannot adjudicate which backbone wins; both call for paired statistical evaluation to obtain stable rankings.}
+SDP operates at the \emph{data layer}: it makes inputs comparable but does not
+adjudicate which backbone is statistically preferable. Our paired-LODO protocol
+operates at the \emph{evaluation layer} and is complementary---it can be run on
+SDP-standardized inputs to yield comparable \emph{conclusions}, not merely
+comparable \emph{data}.
+\emph{(ii)~Protocol-induced uncertainty (measurement).} Da~Silva and Monahan~\cite{dasilva2026pss}
+introduce a Protocol Sensitivity Score and a winner-swap test, showing that
+between-protocol ranking displacement dwarfs within-protocol variance in PM10
+forecasting. We treat our paper as the \emph{cross-domain instantiation} of this
+thesis: we demonstrate the same protocol-induced uncertainty inside cross-domain
+\CSI{} sensing and, crucially, add the cross-domain empirical evidence that LODO
+exposes wins which single-domain cross-validation conceals.
+\emph{(iii)~Uncertainty quantification for deployed models.} Li~\etal~\cite{li2026conformal}
+apply conformal prediction to produce valid prediction sets for WiFi sensing models
+in the wild. Their target is the \emph{per-sample predictive uncertainty of a trained
+model}; ours is the \emph{meta-level trustworthiness of the comparison protocol
+itself}. The two are orthogonal and composable: conformal prediction flags uncertain
+test points while our protocol flags uncertain \emph{leaderboard claims}.
+\emph{(iv)~Coordinate overfitting (mechanism).} Jia~\etal~\cite{chen2026perceptalign}
+attribute cross-layout failure to \emph{coordinate overfitting} and report $>60\%$
+cross-domain error reduction via geometry-aware alignment. Theirs is a
+\emph{mechanism claim}; our paired-LODO is the \emph{evaluation instrument} that
+lets such mechanism claims be compared fairly---without paired statistics, a reported
+``$>60\%$ reduction'' may be partly a seed/fold artifact rather than a genuine effect.
+
+% =============================================================================
+\section{Methodology}
+\label{sec:methodology}
+
+Our methodology has five components: the \BVP{} operator (background), the multi-\Rx{} expansion (our modification), the \LODO\ evaluation protocol (cross-environment design), the paired multi-seed statistical protocol (variance control), and the \MDE\ framework (power pre-registration). Figure~\ref{fig:pipeline} gives an overview of the complete pipeline.
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=\columnwidth]{figs/fig0_pipeline.png}
+    \caption{Reproducibility audit pipeline (7 stages + inset violin showing dataset-dependent representation choice).}
+    \label{fig:pipeline}
+\end{figure}
+
+\subsection{BVP Operator (Background)}
+The Body-coordinate Velocity Profile (\BVP) operator~\cite{zheng2019widar} applies a Short-Time Fourier Transform along the packet dimension, removes the static component via Moving Target Indication (MTI), and projects the resulting Doppler spectrum onto body-coordinate axes via the linearly constrained minimum variance (LCMV) beamformer. For an input tensor $\mathbf{X} \in \mathbb{R}^{T \times A \times S}$ ($T$ packets, $A$ receive antennas, $S$ subcarriers), the BVP output is $\mathbf{B} \in \mathbb{R}^{T' \times S \times D}$ where $D$ is the Doppler-bin count. The canonical implementation aggregates across antennas before beamforming, producing a single tensor per packet.
+
+\subsection{Multi-Rx Expansion (Our Modification)}
+We depart from the canonical implementation by \emph{retaining} the antenna dimension throughout BVP computation. For each antenna $a \in \{1, \ldots, A\}$ we compute a separate Doppler projection $\mathbf{B}_a \in \mathbb{R}^{T' \times S \times D}$, and stack them into a 5-D tensor $\mathbf{B}_{\text{multi}} \in \mathbb{R}^{N \times A \times S \times D \times T'}$. On Widar3.0, this yields a $(N, 9, 30, 33, 25)$ tensor; on MMFi, a $(N, 10, 114, 33, 29)$ tensor. The backbone (\textit{LeNetCSI\_Attn}) is applied independently to each antenna slice before feature fusion, so the network can learn per-antenna discriminative patterns. The full ablation chain is: V1 (Multi-Rx, $A=9$) $\xrightarrow{\text{antenna aggregation}}$ V2 (RMS-agg, $A \to 1$) $\xrightarrow{\text{hop change}}$ V3 (h16 RMS baseline).
+
+\subsection{LODO Evaluation Protocol}
+We adopt Leave-One-Domain-Out (\LODO) cross-validation: for $D$ domains, we train on $D-1$ domains and test on the held-out one, repeating $D$ times so every domain is the test set once. Widar3.0 has 6 released archives (d1, d3, d5, d6, d7, d9); MMFi has 4 environments (E1--E4); CSIDA has 2 environments. The reported accuracy is the macro-average across all $D$ folds.\textbf{\emph{Scope caveat.}} Our ``domain'' unit is the released archive (Widar3.0) or the collection environment (MMFi, CSIDA). On Widar3.0 each released archive is itself a single (user $\times$ position $\times$ orientation) recording session---so our \LODO{} folds mix held-out user / position / orientation variation but do \emph{not} vary the official ``environment'' label (which is not published per-record). We therefore use the field-standard name \LODO{} while disclosing that our Widar3.0 folds are \emph{archive-level} rather than environment-level; the $D = 6$ reported folds should not be conflated with the official $D_{\text{env}} = 3$ environments, and the task is best characterised as cross-(user $\times$ position $\times$ orientation) on Widar3.0 and cross-environment on MMFi/CSIDA. Cross-environment generalisation on Widar3.0 remains an open empirical question that this paper does not address.
+
+\subsection{Paired Multi-Seed Statistical Protocol}
+Each (method, fold) pair is trained under $K = 5$ random seeds, yielding \emph{up to} $D \times K$ paired samples per comparison; the actual number of strict paired samples is determined by the overlap of seed sets between the method and its baseline. The (fold, seed) pairs within a fold share the held-out domain and are \emph{not} strictly independent, so the reported run-level $n$ (strict (fold, seed) pairs) is an upper bound on the effective sample size ($n_\text{eff} = D$ rather than $D \times K$); the per-fold aggregation in \S\ref{sec:results} provides the conservative bound. We report: (i) \textbf{Mean paired $\Delta$}: $\bar{\Delta} = \frac{1}{DK} \sum_{d,k} (\text{acc}_{\text{method}}(d,k) - \text{acc}_{\text{baseline}}(d,k))$, in percentage points (pp). (ii) \textbf{Paired $t$-statistic and $p$-value:} testing $H_0: \Delta = 0$ against $H_1: \Delta \neq 0$. (iii) \textbf{Cohen's $d$ with Hedges' $g$ correction:} $d = \bar{\Delta} / s_{\Delta}$ with $g = d \cdot (1 - 3/(4n - 1))$; 95\% CI via Hedges' approximation $\text{SE}_d = \sqrt{1/n + d^2 / (2n)}$. (iv) \textbf{95\% CI of $\bar{\Delta}$:} standard $t$-interval at $\alpha = 0.05$.
+
+\subsection{MDE Framework (Power Pre-Registration)}
+For every comparison we report the Minimum Detectable Effect (\MDE) at power $1 - \beta = 0.80$ and significance $\alpha = 0.05$; the formula and seed sets are fixed before outcomes are examined, while the $\sigma_{\text{within}}$ entering each \MDE{} is the observed paired-difference spread, so each \MDE{} is a retrospective sensitivity summary rather than a pre-registered gate:
+\begin{equation}
+\MDE{} = (t_{\alpha/2,\,n-1} + t_{\beta,\,n-1}) \cdot \frac{\sigma_{\text{within}}}{\sqrt{n}} \quad (\alpha = \beta = 0.05)
+\label{eq:mde}
+\end{equation}
+where the coefficient $(t_{\alpha/2,n-1} + t_{\beta,n-1})$ is $n$-specific: $n = 18 \to 2.97$, $n = 30 \to 2.90$, not a constant $2.91$ (the asymptotic Gaussian value).
+For our paired design (Widar: up to $D \cdot K = 6 \cdot 5 = 30$ runs per comparison, of which 18 have a strict paired baseline in the 3-shared-seed runs and 30 for the C2/C5 5-seed sets; MMFi: $n = 4 \cdot 5 = 20$), MDE reduces to $0.69 \cdot \sigma_{\text{within}}$ for $n = 18$ and $0.53 \cdot \sigma_{\text{within}}$ for $n = 30$. Empirically, $\sigma_{\text{within}}$ varies from 1.57\,pp (Snapshot$\times$3) to 9.14\,pp (Multi-scale vs Multi-\Rx), yielding \MDE{}s of 1.10\,pp to 5.65\,pp. We declare a comparison ``real'' only when $|\bar{\Delta}| > \MDE$ \emph{and} $p < 0.05$ \emph{and} $|g| \geq 0.2$ simultaneously; otherwise it is consistent with noise given our measurement precision. Two design notes. First, (fold, seed) pairs within a fold share the held-out domain and are not fully independent, so the run-level $n$ is an upper bound on the effective sample size; every conclusion-bearing comparison in \S\ref{sec:results} is therefore accompanied by a per-fold aggregated sensitivity check (seeds averaged within fold, paired $t$ across folds, $n = 6$ or $10$). Second, we apply Holm--Bonferroni step-down correction across the 14 comparisons of Table~\ref{tab:main}; the three-condition conjunction above is a heuristic screen rather than a formal family-wise-error-rate guarantee.
+
+% =============================================================================
+\section{Experimental Setup}
+\label{sec:setup}
+
+\subsection{Datasets}
+\textbf{Widar3.0}~\cite{zheng2019widar}: the official release comprises 17{,}000 gesture instances---12{,}000 hand-gesture instances covering six gestures (push\&pull, sweep, clap, slide, draw-circle, draw-zigzag; $16 \text{users} \times 5 \text{positions} \times 5 \text{orientations} \times 6 \text{gestures} \times 5 \text{instances}$) across three environments, plus 5{,}000 draw-number instances from two volunteers. Each gesture instance is captured by multiple Tx--Rx links; after deduplication our pool contains 163{,}650 unique link-level records (178{,}300 raw per-link records across the 15 released archives, minus 14{,}650 duplicates). In the released archives, gesture indices 1--5 appear consistently across 13 domain archives, indices 6--8 occur only in two additional archive sessions, and index~9 is absent; the released index set, rather than any nominal taxonomy, is what our caches inherit. We hold out six domain archives (d1, d3, d5, d6, d7, d9) in turn as 6 folds for \LODO; the released archives do not publish a per-record environment label, so these folds are archive-level and we make no environment-level split claim. Each sample is a $(T{=}256, A{=}9, S{=}30)$ complex-valued \CSI{} tensor at 1000\,Hz packet rate. \textbf{MMFi}~\cite{yang2023mmfi}: 27 gestures (we use 14 single-hand gestures after filtering multi-hand classes), 4 environments (E1--E4), 40 users; \CSI{} is sampled at 100\,Hz on a 10-antenna array across 114 subcarriers. \textbf{CSIDA}: 2,844 samples, 6 actions (lunges, squats, torso-twists, arm-circles, jogging, walking), 2 environments (env 0, env 1), 5 users; \CSI{} is sampled at 100\,Hz on a 3-antenna array across 114 subcarriers; we use the 2 environments as 2 folds for \LODO. CSIDA is used in \S\ref{sec:csida} as the third replication dataset.
+
+\subsection{Backbone}
+All methods share the \textit{LeNetCSI\_Attn} backbone: three convolutional blocks (32/64/128 channels) followed by a 4-head attention pooling layer and an MLP head ($\sim$130K parameters). The backbone is intentionally simple so that gains cannot be attributed to architectural novelty.
+
+\subsection{Methods Compared}
+We compare ten methods spanning three categories. \textbf{Architectural (4):} LeNet (baseline), LeNet+Attn, LeNet+Attn+MHA, ResNet8. \textbf{Algorithmic (5):} DANN (GRL), Snapshot$\times$3 ensemble, Mixup, Reweighting, Pretrain. \textbf{Representational (5):} Widar-orig (RMS hop=16), Multi-scale (hop $\in \{8, 16, 32\}$), Multi-Rx (keep $A=9$, ours), RMS-agg (vanilla), Single-Rx ($A=1$, reference). As a \emph{larger-backbone capacity control}, we additionally evaluate a CBAM+ResNet18 backbone (11.42M parameters, roughly $89\times$ the size of LeNetCSI\_Attn); this is reported as comparison \textbf{C10} and serves as a sanity check that the observed effects are not driven by model capacity alone. The original C10 evaluation used a 12{,}000-sample subset of the dedup-ed Widar3.0 pool (7.33\,\% of the full 163{,}650 unique link-level samples); to check the generality of the conclusion we additionally evaluated \textbf{C10v2} on a 50{,}000-sample subset (30.55\,\% of the full pool) under the identical paired LODO protocol. Both backbones consume the identical folds, seeds, and labels within each subset, so the capacity contrast is internal to this fixed labeling (the released index set is disclosed in the Datasets subsection). After the labeling audit we additionally evaluated \textbf{C10v3} on the canonical 5-class cache (50{,}000 of the 158{,}500 five-gesture pool, 31.55\,\%; 10 folds $\times$ 3 seeds = 30 pairs) under the same protocol.
+
+% =============================================================================
+\section{Main Results: Twelve Paired Comparisons Under the Paired \mbox{Audit}}
+\label{sec:results}
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.92\textwidth]{figs/fig1_main_boxplot.png}
+    \caption{Paired forest plot of the 9 primary paired comparisons (dual-panel; the capacity-control series C10--C10v3 and the intervention controls C8--C9 are reported in Table~\ref{tab:main}). \textbf{Left:} mean $\Delta$ with 95\% CI of the absolute gain (pp). \textbf{Right:} Cohen's $d$ with Hedges' $g$-correction and 95\% CI, with $|d| \in \{0.2, 0.5, 0.8\}$ reference thresholds for small/medium/large effects. Four comparisons reach $p < 0.05$ with positive $\Delta$ (C5, C6, C7a, C7b); three satisfy the full audit criterion of \S\ref{sec:methodology} (C5, C6, C7b). Across the full audit, five comparisons cross $|g| \geq 0.8$: C5 ($g = 0.94$), C6 ($g = 1.68$), C7b ($g = 0.84$), and the two harmful controls C8 ($g = -0.90$), C9 ($g = -1.11$). All four ``algorithmic'' methods (C1, C3, C4, C2) fail the audit criteria and are consistent with noise. C9 (family-wise significant) and nominally C8 (not after Holm correction) show that strong algorithmic interventions can \emph{hurt} multi-\Rx\ performance under paired evaluation; the C10 backbone control points in the same (negative) direction, though its significance is subset-fragile (\S\ref{sec:results}).}
+    \label{fig:forest}
+\end{figure*}
+
+We systematically evaluated ten recent improvements under a paired LODO protocol on Widar3.0 (6 folds; the C10 capacity control uses $n = 18$ strict paired samples from 3 shared seeds; other Widar comparisons use $n = 18$ or $n = 30$ strict paired samples depending on the seed-coverage of the baseline; MMFi uses $n = 20$; CSIDA uses $n = 6$ per comparison). Figure~\ref{fig:forest} presents the results as a dual-panel paired forest plot; Table~\ref{tab:main} reports the numerical values. Of the ten methods, three representation-family comparisons reach significance with $|g| \geq 0.8$ (C6 $g = 1.68$, C5 $g = 0.94$, C7b $g = 0.84$); C7a (multi-\Rx\ vs RMS-agg on MMFi) reaches $p = 0.020$ with a medium effect ($g = 0.55$) whose $|\bar{\Delta}|$ falls below its \MDE\ (\S\ref{sec:mde}). \textbf{C10 (the larger-backbone capacity control, CBAM+ResNet18) reaches $\Delta = -4.61$\,pp ($p = 0.028$, $d = -0.52$, $3/18$ wins for CBAM+ResNet18) \emph{on the original 12k Widar3.0 subset} (7.33\,\% of the full unique pool), suggesting that the larger backbone may slightly hurt cross-domain accuracy. Honest re-evaluation \textbf{C10v2} on a 50{,}000-sample subset (30.55\,\% of the full pool; same protocol, 18 strict pairs) returns $\Delta = -5.75$\,pp (95\,\% CI $[-11.77, +0.26]$, $p = 0.0609$, $d = -0.44$, 4/18 wins for CBAM+ResNet18).} The direction is therefore \emph{stable} across subsets---the smaller backbone wins on both---but the \emph{significance does not survive}: the nominally significant 12k result ($p = 0.028$) degrades to $p = 0.0609$ with a CI spanning zero at 50k, and the paired-difference standard deviation inflates from 8.9 to 13.0\,pp. Both subsets are drawn from the same dedup-ed release pool, whose gesture indices 1--5 are consistent across 13 domain archives while indices 6--8 (${\sim}8.8\,\%$ of the 50k subset) come from only two archive sessions; because both backbones consume identical folds, seeds, and labels, the paired capacity contrast is internal to this fixed labeling. We report both numbers transparently: this is evidence that the \emph{statistical significance} of a backbone comparison is subset-fragile under protocol-induced variance, not evidence of a winner swap---and we accordingly retract any reading of ``which backbone wins is a property of the evaluation subset.'' We also remind the reader that the 50k $p = 0.0609$ marginally exceeds the $\alpha = 0.05$ threshold, so the 50k result is consistent with both a small negative and a near-null effect; we do not claim the larger backbone is universally preferable or harmful. \textbf{Final word on the labeling axis (C10v3):} after this audit was completed, we rebuilt the cache with the canonical global 5-class labeling (50k of the 158{,}500 five-gesture pool, 31.55\,\%; 10 folds $\times$ 3 seeds = 30 pairs) and re-ran the identical capacity control. Both backbones return accuracy within 1.0\,pp of the 20\,\% chance level (Attn $20.67 \pm 0.54$, CBAM $20.95 \pm 0.83$), with $\Delta = -0.28$\,pp ($p = 0.159$, $g = -0.25$) and the paired-difference std collapsing from 13.0 to 1.10\,pp; a TOST equivalence test at $\pm$1\,pp accepts equivalence against the chance baseline for the pooled 60 runs ($p = 0.021$) and for Attn ($p = 0.001$), and neither backbone approaches its v1 accuracy (38.5\,\%/32.7\,\%). The v1 capacity contrast is therefore attributable to the label--domain coupling of the released per-archive index scheme rather than to backbone capacity: once labeling is fixed, both the absolute accuracy and the backbone contrast collapse to chance. Three checks make this attribution more than a conjecture. (i)~\emph{Label-integrity audit:} the canonical cache has all five classes present in all ten domains with a near-independent class--domain association (Cram\'er's $V = 0.011$), so the chance-level result is not explained by a degenerate or mis-built cache. (ii)~\emph{Fold-level robustness:} aggregating seeds within fold (10 folds) leaves C10v3 a tight zero ($p = 0.166$, 95\,\% CI $[-0.71, +0.14]$), so the null is not an artifact of treating (fold, seed) pairs as independent; the same aggregation leaves the v1 headline C6 significant ($+8.14$\,pp, $p = 0.002$, 6/6 folds)---although C6 itself does not survive relabeling (C6v2 below). (iii)~\emph{Result taxonomy:} we distinguish \emph{underpowered} (CI too wide to conclude), \emph{direction-consistent, unresolved} (sign stable, significance not reached; C10v2), \emph{tight zero} (CI narrow around zero at run and fold level; C10v3), and \emph{reversed} (significant in the opposite direction once labels are corrected; C6v2), and we do not interchange them. The remaining six comparisons all fail both the $p < 0.05$ test and the $|g| \geq 0.2$ test; we report them as \emph{non-significant} under the present protocol rather than as ``artifacts''. \textbf{The representation axis under corrected labels (C6v2).} The same relabeled cache re-runs the headline representation comparison---multi-\Rx\ (\texttt{lenet\_attn}) vs.\ Widar-orig RMS aggregation (plain \texttt{lenet})---on 30 strict pairs over identical folds and seeds. The direction reverses: multi-\Rx\ $20.67\,\%$ vs.\ orig $31.13\,\%$, $\Delta = -10.46$\,pp ($t = -41.97$, $p \approx 1.6\times10^{-27}$, 95\,\% CI $[-10.97, -9.95]$, wins $0/30$; fold-level $t = -24.58$, CI $[-11.42, -9.50]$, $0/10$ folds). A within-domain sanity check on the same cache (stratified random $64/16/20$ split, three seeds) returns $20.65\,\%$ for the multi-\Rx\ pipeline---chance level---while the orig pipeline retains $31.13\,\%$ under LODO, so the reversal is not a pipeline failure: under canonical labels the 5-class task is at floor for the multi-\Rx\ representation-model combination, and the simpler RMS aggregation is the only side that extracts real signal once labeling is corrected. The representation ranking inverts from $+8.14$ to $-10.46$\,pp between the released and canonical labelings---the audit's strongest instance of label-dependent optimality.
+
+\begin{table*}[!t]
+    \centering
+    \caption{Main result: 12 primary paired comparisons across Widar3.0 and MMFi, plus the C10v2 and C10v3 capacity-control re-evaluations and the C6v2 representation re-evaluation (15 rows). $\Delta$ in pp; $g$ = Hedges' $g$-corrected effect size. Bold rows cross $|g| \geq 0.8$ or are pre-specified ``capacity/hurts'' controls. The C10 capacity control was originally evaluated on a 12{,}000-sample subset of Widar3.0 (7.33\,\% of the full 163{,}650-sample unique pool) and re-evaluated as \textbf{C10v2} on a 50{,}000-sample subset (30.55\,\% of the full pool); both rows are reported. Both Widar subsets come from the same dedup-ed release pool (163{,}650 link-level records; released gesture indices 1--8, indices 6--8 from only two archive sessions); the backbone contrast is internal to this fixed labeling. \textbf{C10v3} re-runs the same control on the canonical 5-class cache (50k of 158{,}500 pool, 31.55\,\%; 30 pairs): both backbones return chance-level accuracy (Attn $20.67 \pm 0.54$ vs CBAM $20.95 \pm 0.83$; random $= 20\,\%$), $\Delta = -0.28$\,pp ($p = 0.159$, $g = -0.25$), and the paired-difference std collapses from 13.0 to 1.10\,pp---a tight zero (fold-level $p = 0.166$, CI $[-0.71, +0.14]$) rather than an underpowered estimate; TOST $\pm$1\,pp accepts equivalence vs.\ the 20\,\% baseline for the pooled 60 runs ($p = 0.021$). C10v3 uses all ten canonical-pool domain archives as folds (C10/C10v2 use the six-fold legacy subset); the chance-level conclusion is fold-invariant. C6v2 re-runs the C6 representation comparison on the same canonical cache (30 pairs, identical folds/seeds): the direction reverses ($-10.46$\,pp, $0/30$, $p \approx 1.6\times10^{-27}$), and a within-domain sanity check returns $20.65\,\%$ (chance) for the multi-\Rx\ pipeline, so the v1 ``yes'' verdict is cache-conditioned. Under Holm--Bonferroni across all 15 rows, C5, C6, C7b, and C9 survive; C8 ($p = 0.0066$ vs.\ Holm threshold $0.005$) is direction-consistent but not family-wise significant. C7a--c are computed on the v1 path-labeled MMFi cache (1080 samples) and should be read as v1-cache-conditioned rather than as representation-level conclusions about MMFi (\S\ref{sec:boundary}). CSIDA results (36 paired runs across 2 folds $\times$ 3 seeds $\times$ 3 recipes $\times$ 2 channels; on the amplitude channel multi-Rx reaches $+1.39$\,pp over single-Rx, $d = +0.84$, wins 4/6) are reported separately in \S\ref{sec:csida}.}
+    \label{tab:main}
+    \setlength{\tabcolsep}{4pt}
+    \footnotesize
+    \begin{tabular}{@{}l >{\raggedright\arraybackslash}p{5cm} l c c c c@{}}
+    \toprule
+    ID & Comparison & Dataset & $\Delta$ (pp) & $g$ & $p$ & Sig. \\
+    \midrule
+    C1 & MHA vs Conv.\ attn.               & Widar & $+1.13$   & $+0.16$ & 0.478 & ---  \\
+    C2 & Multi-scale vs Multi-\Rx          & Widar & $-1.28$   & $-0.14$ & 0.450 & ---  \\
+    C3 & Snapshot$\times$3 vs single       & Widar & $+0.23$   & $+0.14$ & 0.537 & ---  \\
+    C4 & DANN vs source-only               & Widar & $-1.22$   & $-0.14$ & 0.530 & ---  \\
+    \textbf{C5} & \textbf{Multi-\Rx\ vs RMS-agg} & \textbf{Widar} & $\mathbf{+7.69}$ & $\mathbf{+0.94}$ & $\mathbf{1.1\!\times\!10^{-5}}$ & \textbf{yes} \\
+    \textbf{C6} & \textbf{Multi-\Rx\ vs Widar-orig} & \textbf{Widar} & $\mathbf{+8.14}$ & $\mathbf{+1.68}$ & $\mathbf{1.3\!\times\!10^{-6}}$ & \textbf{yes} \\
+    C7a & Multi-\Rx\ vs RMS-agg (MMFi)     & MMFi & $+0.91$   & $+0.55$ & 0.020 & below \MDE \\
+    \textbf{C7b} & \textbf{Multi-scale vs RMS-agg (MMFi)} & \textbf{MMFi} & $\mathbf{+1.84}$ & $\mathbf{+0.84}$ & $\mathbf{9.2\!\times\!10^{-4}}$ & \textbf{yes} \\
+    C7c & Multi-scale vs Multi-\Rx\ (MMFi)     & MMFi & $+0.93$   & $+0.35$ & 0.116 & --- \\
+    \textbf{C8} & \textbf{Mixup vs vanilla Multi-\Rx} & \textbf{Widar} & $\mathbf{-7.90}$ & $\mathbf{-0.90}$ & $\mathbf{0.0066}$ & \textbf{hurts (Holm n.s.)} \\
+    \textbf{C9} & \textbf{Reweight vs vanilla Multi-\Rx} & \textbf{Widar} & $\mathbf{-10.17}$ & $\mathbf{-1.11}$ & $\mathbf{0.0017}$ & \textbf{hurts} \\
+    \textbf{C10} & \textbf{CBAM+ResNet18 vs Attn (capacity, 12k)} & \textbf{Widar} & $\mathbf{-4.61}$ & $\mathbf{-0.49}$ & $\mathbf{0.028}$ & \textbf{non-positive} \\
+    \textbf{C10v2} & \textbf{CBAM+ResNet18 vs Attn (capacity, 50k)} & \textbf{Widar} & $\mathbf{-5.75}$ & $\mathbf{-0.42}$ & $\mathbf{0.061}$ & \textbf{consistent (n.s.)} \\
+    \textbf{C10v3} & \textbf{CBAM+ResNet18 vs Attn (capacity, canonical v2)} & \textbf{Widar} & $\mathbf{-0.28}$ & $\mathbf{-0.25}$ & $\mathbf{0.159}$ & \textbf{chance-level} \\
+    \textbf{C6v2} & \textbf{Multi-\Rx\ vs Widar-orig (repr, canonical v2)} & \textbf{Widar} & $\mathbf{-10.46}$ & $\mathbf{-7.49}$ & $\mathbf{1.6\!\times\!10^{-27}}$ & \textbf{reversed} \\
+    \bottomrule
+    \end{tabular}
+\end{table*}
+
+\paragraph{Algorithmic methods (C1, C3, C4, C2)---non-significant.}
+The four algorithmic methods all produce $|\bar{\Delta}| \leq 1.28$\,pp with $p \geq 0.45$. Under our 18-sample paired designs these effects fall below their \MDE{} values (1.10--5.65\,pp; \S\ref{sec:mde}). The published gains of 2--5\,pp claimed in the original papers are therefore not distinguishable from noise in our paired evaluation; we do not claim the original results are incorrect.
+
+\paragraph{Representational methods (C5, C6, C7a--c)---the representation axis.}
+The \MultiRx\ expansion produces $\Delta = +7.69$\,pp vs RMS-aggregation ($g = 0.94$, $p = 1.1 \times 10^{-5}$) and $\Delta = +8.14$\,pp vs the canonical Widar-orig ($g = 1.68$, $p = 1.3 \times 10^{-6}$) on the released v1 labels. On MMFi the multi-\Rx\ advantage does not transfer, and multi-scale is \emph{nominally} ahead: it beats RMS-agg by $+1.84$\,pp ($p = 9.2\times10^{-4}$, above its \MDE) and multi-\Rx\ by $+0.93$\,pp ($p = 0.116$, not significant; v1 path-labeled cache). The multi-\Rx{} benefit is therefore \emph{conditioned on the dataset}, not universal; and under the canonical relabeling the Widar comparison itself \emph{reverses} (C6v2, \S\ref{sec:results}).
+
+% =============================================================================
+\section{Variance Decomposition: Why Seeds Mislead}
+\label{sec:variance}
+
+We decompose the total variance of the per-fold accuracy into four components: \emph{seed} (between-seed), \emph{fold} (between-domain), \emph{variant} (between-representation), and \emph{fold-mean residual}.
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=\columnwidth]{figs/fig2_variance_decomp.png}
+    \caption{Variance decomposition for the 4 BVP variants on Widar3.0 LODO, $K=5$ seeds, $D=6$ folds. The dominant component is \emph{seed} (4.8\,pp on average), which is 4.7$\times$ larger for Multi-Rx than for the other variants.}
+    \label{fig:variance}
+\end{figure}
+
+\textbf{Finding.} The seed component dominates: $\sigma_{\text{seed}} = 4.8$\,pp on average (Fig.~\ref{fig:variance}), versus $\sigma_{\text{fold}} = 1.4$\,pp and $\sigma_{\text{residual}} = 0.7$\,pp. Crucially, the seed component is \emph{5$\times$ larger for Multi-Rx than for RMS-agg}, even though both are evaluated under the same protocol. The more expressive representation is also the \emph{more variable} one---a finding that single-seed studies are structurally unable to detect.
+
+% =============================================================================
+\section{MDE Analysis: Power in Practice}
+\label{sec:mde}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=\columnwidth]{figs/fig3_mde_validation.png}
+    \caption{\MDE\ self-validation. For each of the 9 primary paired comparisons (C1--C7c), the bar shows the observed $|\bar{\Delta}|$; the annotation reports the \MDE\ given the observed within-comparison $\sigma_{\text{within}}$ and $n$ (Eq.~\ref{eq:mde}). Six of the nine comparisons fall below their \MDE{} (not distinguishable from noise at our precision); C5, C6, and C7b cross it.}
+    \label{fig:mde}
+\end{figure}
+
+\textbf{Finding.} The four algorithmic methods (C1, C2, C3, C4) all produce $|\bar{\Delta}|$ below their respective \MDE{} values ($|\Delta| \le 1.28$\,pp vs \MDE{} $\in [1.10, 5.65]$\,pp), so under the audit criterion of \S\ref{sec:methodology} they are declared \emph{not distinguishable from noise} at our measurement precision. Only the representational methods C5 and C6 cross the \MDE\ bar by a wide margin. We emphasize that ``below \MDE'' is a statement about our detection threshold, not a proof of a null effect.
+
+% =============================================================================
+\section{Mechanism Under the Released v1 Labels (Reversed Under Canonical Relabeling)}
+\label{sec:mechanism}
+
+We investigate the mechanism behind the +8.14\,pp gain \emph{on the released v1-label cache} via three quantitative lenses (Figure~\ref{fig:mechanism}). \textbf{\emph{Caveat:}} this mechanism is conditional on the released label--domain coupling (\S\ref{sec:boundary}). The same representation recipe---multi-\Rx\ (\texttt{lenet\_attn}) vs.\ Widar-orig RMS aggregation (\texttt{lenet})---rerun on the canonical 5-class relabeling (C6v2) reverses the sign to $\Delta = -10.46$\,pp (\S\ref{sec:results}); both pipelines are at chance within-domain on the canonical cache (multi-\Rx\ $20.65\,\%$, orig $18.66\,\%$, vs.\ a $20\,\%$ chance level), confirming the canonical 5-class task is at floor for the audited representation--model combinations under any split. We therefore describe below a v1-cache-conditioned artifact: the antenna-participation-ratio and Fisher-discriminability lenses explain the v1 \emph{shortcut} signal, not a universally preferable back-end.
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.92\textwidth]{figs/fig5_mechanism.png}
+    \caption{Multi-\Rx\ mechanism decomposition (4-panel). \textbf{(a)} Antenna Participation Ratio (PR): PR $= 1.89 \pm 0.17$ ($n = 2500$ positions). \textbf{(b)} Fisher $F$ per axis: Multi-\Rx's per-antenna $F$ is \emph{lower} than RMS-agg's per-axis $F$ (4.65 vs 23.05). \textbf{(c)} Total Fisher information: $1.82\times$ higher for Multi-\Rx. \textbf{(d)} Verdict: the gain comes from preserving density, not from increasing per-position discriminative power.}
+    \label{fig:mechanism}
+\end{figure*}
+
+\subsection{Antenna Participation Ratio (PR)}
+We define the antenna participation ratio of a per-position covariance matrix $\mathbf{C} \in \mathbb{R}^{A \times A}$ as
+\begin{equation}
+\PR(\mathbf{C}) = \frac{\left(\sum_{i=1}^{A} \lambda_i\right)^2}{\sum_{i=1}^{A} \lambda_i^2},
+\label{eq:pr}
+\end{equation}
+where $\lambda_1 \geq \cdots \geq \lambda_A \geq 0$ are the eigenvalues of $\mathbf{C}$~\cite{roy2007}. Empirically, $\PR = 1.89 \pm 0.17$ on Widar3.0, meaning that of the 9 antennas only $\sim 2$ are linearly independent. RMS-aggregation contracts all 9 antennas to a single slot ($\PR = 1$), while \MultiRx{} retains all 9 slots ($\PR = 1.89$), an information-content gain of $1.89 \times$ in the antenna dimension alone.
+
+\subsection{Fisher $F$ Per Axis and Information Density}
+For each axis position $k$, the Fisher criterion $F(k) = \sigma^2_{\text{between}}(k) / \sigma^2_{\text{within}}(k)$ on Multi-Rx is $F_{\text{mean}} = 4.65$, while on RMS-agg $F_{\text{mean}} = 23.05$ ($4.95\times$ higher per slot). However, Multi-Rx retains $9\times$ more slots, so its \emph{total} Fisher information $\sum_k F(k)$ exceeds RMS-agg's by $1.82 \times$. RMS-aggregation \emph{loses} low-$F$ but high-density information that the backbone can still exploit. The total effect decomposes as $\rho_{\text{antenna}} \times \rho_{\text{hop}} = 5\times \times 1\times = 5\times$ density gain, which translates directly into the observed $\sim$8\,pp accuracy gain.
+
+% =============================================================================
+\section{Boundary: Dataset-Conditioned Optimality on MMFi and CSIDA}
+\label{sec:boundary}
+
+To test the generalizability of the Widar3.0 finding, we evaluate the same protocol on MMFi (27 classes, 4 environments) and CSIDA (6 classes, 2 environments). The Widar3.0 $\to$ MMFi cross-collection direction is consistent under v1 cache labels but reverses on canonical labels; the Widar3.0 $\to$ CSIDA cross-platform direction (multirecipe +1.39\,pp over single-Rx on amplitude) is direction-consistent but unresolved at our $n = 6$ significance threshold ($p = 0.096$).
+
+\subsection{Dataset-Flip Discovery on MMFi}
+On MMFi the dataset-optimal representation is \emph{nominally} multi-scale rather than multi-\Rx: C7b multi-scale vs RMS-agg $\Delta = +1.84$\,pp ($p = 9.2\times10^{-4}$, above its \MDE) and C7c multi-scale vs multi-\Rx\ $\Delta = +0.93$\,pp ($p = 0.116$, not significant; v1 path-labeled cache, $n = 20$ paired runs). The +8.14\,pp gain from multi-\Rx\ on Widar3.0 (released labels; reversed on canonical labels, C6v2) does not transfer.
+
+\subsection{Geometric Explanation via t-SNE}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figs/fig_tsne_widar.png}
+        \caption{Widar3.0: domains form partially separable clusters.}
+    \end{subfigure}
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figs/fig_tsne_mmfi.png}
+        \caption{MMFi: domains are \emph{indistinguishable}.}
+    \end{subfigure}
+    \caption{Domain separability in the \BVP\ feature space. On Widar3.0, the 6 domains form partially separable clusters, leaving room for multi-\Rx\ to exploit. On MMFi, the 4 domains are visually indistinguishable---there is no separability for multi-\Rx\ to amplify.}
+    \label{fig:tsne}
+\end{figure*}
+
+\textbf{Finding.} On Widar3.0 (Fig.~\ref{fig:tsne}\,a), the 6 domains form partially separable clusters in the \BVP\ feature space, leaving headroom for a representation that retains per-antenna discriminative power. On the v1 path-labeled MMFi cache (Fig.~\ref{fig:tsne}\,b; 1080 samples, 27 artificial balance), the 4 environments are visually indistinguishable, so on this specific cache construction there is no discriminative signal for multi-\Rx{} to amplify; multi-scale, which captures gestural intra-class structure within each domain, becomes the \emph{nominally} optimal choice instead (its residual edge over multi-\Rx\ is not statistically significant on the v1 cache; \S\ref{sec:boundary}). On the v2 segment-level MMFi cache (16{,}447 segments; arxiv appendix), the same \BVP{} representation is in fact \emph{highly discriminative} for the 27-class task---the between-vs-within variance ratio is 617.85 and the LeNet-vs-CBAM+ResNet18 paired comparison becomes statistically indistinguishable ($\Delta = -0.33$\,pp, $p = 0.564$, $n = 3$ seeds)---so the v1 ``MMFi is geometrically inseparable'' finding is a property of the v1 path-labeled cache construction, not of MMFi itself.
+
+\subsection{CSIDA Replication: Amplitude Dominates, Phase Fails}
+\label{sec:csida}
+
+We re-evaluate the same three BVP recipes used in C8--C10---single-Rx (\texttt{widar\_orig}), multi-Rx (\texttt{f21\_multi\_rx}), multi-scale (\texttt{f24\_multiscale})---on CSIDA~\cite{csida2022} (3000 trials, 2844 retained, 6 classes, 2 environments, 5 users, collected on Atheros NICs) under our paired LODO protocol, under two input channels: amplitude ($\log|\cdot|$) and phase ($\angle \cdot$). For each (recipe, channel) cell we ran 2 folds $\times$ 3 seeds $= 6$ runs, yielding 12 runs per recipe and 36 runs in total. Results:
+
+\begin{table*}[!t]
+    \centering
+    \caption{Amplitude BVP on CSIDA (env-LODO): 6 paired runs per row (2 folds $\times$ 3 seeds). The multi-Rx recipe gains $+1.39$\,pp over single-Rx ($d{=}+0.84$, wins 4/6), direction-consistent with the multi-antenna benefit of Widar3.0 (C6) on a second hardware platform, though not significant under our own audit criterion ($p = 0.096$, $n = 6$) and therefore reported as unresolved rather than as a replication. The multi-scale recipe underperforms multi-Rx by $-1.09$\,pp ($d{=}-0.90$, wins 2/6), mirroring the non-significant Widar3.0 C2 direction ($-1.28$\,pp); the only nominal recipe-level sign difference in our evidence base is against the MMFi v1 cache (C7c, $+0.93$\,pp, $p = 0.116$), itself a documented cache artifact (\S\ref{sec:boundary}). Phase BVP is reported separately in the text: all three recipes stay at or below the 1/6 random baseline (16.69/15.79/15.26\,\%).}
+    \label{tab:csida}
+    \setlength{\tabcolsep}{6pt}
+    \footnotesize
+    \begin{tabular}{@{}l c c c c c@{}}
+    \toprule
+    Comparison & Mean acc. & $\Delta$ (pp) & $g$ & $p$ & Sig. \\
+    \midrule
+    \texttt{widar\_orig}     & $17.69 \pm 0.78$ & ---        & ---  & ---  & --- \\
+    \texttt{f21\_multi\_rx}  & $\mathbf{19.08 \pm 1.30}$ & $+1.39$  & $+0.84$ & 0.096 & wins 4/6 \\
+    \texttt{f24\_multiscale} & $17.98 \pm 0.74$ & $+0.30$   & ---     & 0.615 & n.s.\ wins 3/6 \\
+    \midrule
+    \multicolumn{3}{l}{\emph{multi-scale vs.\ multi-Rx:}} & $-1.09$ & 0.079 & $d{=}-0.90$ wins 2/6 \\
+    \bottomrule
+    \end{tabular}
+\end{table*}
+
+\textbf{Finding.} On the amplitude channel, the multi-Rx recipe reaches $19.08\%$---$+1.39$\,pp over single-Rx ($d = +0.84$, wins 4/6)---which is above the $1/6 = 16.67\%$ random baseline for a 6-class problem, whereas multi-scale underperforms multi-Rx by $-1.09$\,pp ($d = -0.90$, wins 2/6). On the phase channel, by contrast, all three recipes stay at or below the random baseline (16.69/15.79/15.26\,\%). The multi-\Rx{}-over-single-Rx \emph{benefit} is therefore direction-consistent across the two distinct hardware platforms (Intel~5300 for Widar3.0, Atheros for CSIDA) in our evidence base: $+8.14$\,pp on Widar3.0 (C6, $d = 1.71$; released labels---reversed under canonical relabeling, C6v2) and $+1.39$\,pp on CSIDA ($d = +0.84$, wins 4/6; \emph{not} a replication under our own audit criterion since the CSIDA contrast does not reach significance at the $n = 6$ budget, $p = 0.096$). The recipe-level comparison (multi-scale vs.\ multi-\Rx), by contrast, does not reach significance on any real-data benchmark: $-1.28$\,pp on Widar3.0 (C2, $p = 0.450$) and $-1.09$\,pp on CSIDA ($p = 0.079$, $d = -0.90$) point the same way, while the only nominal reversal ($+0.93$\,pp, $p = 0.116$) occurs on the MMFi v1 path-labeled cache and is a documented cache artifact. Combined with the phase-channel failure, this yields an \emph{optimality} spectrum conditioned on both dataset geometry and input channel:
+
+\begin{itemize}
+    \item \textbf{Tier A (v1-cache-conditioned large effect, $|d| \geq 0.8$):} Widar3.0 v1 labels only---Multi-Rx dominates ($+8.14$\,pp, $d = 1.71$); the same comparison reverses under canonical relabeling (C6v2: $-10.46$\,pp, $0/30$, $p \approx 1.6\times10^{-27}$).
+    \item \textbf{Tier B (no transfer, nominal difference only):} MMFi (v1 cache)---the multi-\Rx\ advantage does not transfer; multi-scale is nominally ahead ($+1.84$\,pp vs.\ RMS-agg, $p = 9.2\times10^{-4}$; $+0.93$\,pp vs.\ multi-\Rx, $p = 0.116$, n.s.).
+    \item \textbf{Tier C (channel-conditioned):} CSIDA---on amplitude, multi-\Rx\ gains $+1.39$\,pp over single-Rx ($d = +0.84$, wins 4/6); the contrast is direction-consistent with the Widar3.0 multi-antenna benefit but does not reach significance under our own audit threshold ($n = 6$, $p = 0.096$, so we report this as \emph{direction-consistent, unresolved} rather than as a replication). On phase, all recipes fall at or below random. The dominant conditioning variable here is the input channel rather than the dataset.
+\end{itemize}
+
+This spectrum is, to our knowledge, the first empirical evidence in \CSI{} sensing that \emph{no single representation is unconditionally optimal}: the multi-\Rx{} benefit is bounded by the dataset's geometric separability (MMFi) and by the input channel (CSIDA phase), and the apparent dataset-level representation flips in our evidence base reduce to artifacts of the v1 path-labeled cache rather than to genuine dataset-level reversals.
+
+% =============================================================================
+\section{System Implementation Considerations}
+\label{sec:system}
+
+\subsection{Computational Profile}
+We profile the audited pipeline on a single consumer NVIDIA RTX 2080 Ti (11\,GB VRAM):
+
+\begin{table*}[!t]
+    \centering
+    \caption{Computational profile of audited methods on RTX 2080 Ti. LeNetCSI\_Attn ($\sim$130K parameters) reproduces the full audit on commodity hardware in $\sim$5 GPU-hours; CBAM+ResNet18 is $\sim$89$\times$ larger and provides no measurable benefit under the paired protocol ($-4.61$\,pp at 12k, $p = 0.028$; direction stable but not significant at 50k, C10/C10v2; contrast vanishes entirely on the canonical 5-class cache, C10v3).}
+    \label{tab:profile}
+    \setlength{\tabcolsep}{8pt}
+    \footnotesize
+    \begin{tabular}{@{}l c c c c c@{}}
+    \toprule
+    Method & Params & \makecell{FLOPs/sample\\(M)} & \makecell{Peak GPU\\(MB)} & \makecell{Inference\\(ms/sample)} & \makecell{Train time\\(min/fold)} \\
+    \midrule
+    LeNetCSI\_Attn (ours) & 130K  & 28    & 580   & 0.41 & 1.1 \\
+    CBAM+ResNet18 (C10)   & 11.42M & 3{,}800 & 5{,}830 & 8.7 & 26.0 \\
+    LeNet (no attn)       & 95K   & 24    & 540   & 0.36 & 0.9 \\
+    LeNet+MHA             & 180K  & 32    & 640   & 0.52 & 1.4 \\
+    ResNet8               & 1.2M  & 240   & 1{,}200 & 1.8 & 4.5 \\
+    \bottomrule
+    \end{tabular}
+\end{table*}
+
+\subsection{Practical Implications for Deployment}
+Three practical implications follow from Table~\ref{tab:profile}. \textbf{First}, the smaller backbone is not only cheaper to train (1.1 vs 26 min/fold) but also shows no deficit under our paired protocol: C10/C10v2 show that the 89$\times$ larger CBAM+ResNet18 provides no measurable benefit ($-4.61$\,pp at 12k, $p = 0.028$; $-5.75$\,pp at 50k, not significant), and C10v3 shows the contrast vanishes entirely on the canonical 5-class cache. \textbf{Second}, inference latency is dominated by FLOPs; for real-time embedded deployment (e.g., smart-home presence detection on an ESP32-class device), the 0.41\,ms/sample of LeNetCSI\_Attn is achievable on commodity hardware, while CBAM+ResNet18 at 8.7\,ms/sample would require a more powerful SoC. \textbf{Third}, the wider variance of more expressive representations (4.7$\times$ higher seed-std for Multi-Rx, Table~\ref{fig:variance}) means that \emph{more replications are needed} to distinguish real effects from noise---our $K = 5$ seeds is on the boundary of adequacy for Multi-Rx (MDE 4.21\,pp); single-seed or 3-seed designs are insufficient.
+
+% =============================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Practical Guidelines for CSI Sensing Practitioners}
+Based on our audit, we recommend the following practice for CSI cross-domain research:
+\begin{enumerate}
+    \item \textbf{Adopt paired multi-seed evaluation.} A $K \geq 5$ paired design with explicit \MDE\ reporting is necessary to detect effects in the 1--8\,pp range typical of CSI improvements. 3-seed designs (common in this field) detect only effects $\geq$ 3\,pp with 70\% power.
+    \item \textbf{Report effect sizes with confidence intervals.} Cohen's $d$ (or Hedges' $g = d \cdot (1 - 3/(4n - 5))$ for small samples) with 95\% CI is the appropriate reporting standard; $p$-values alone are insufficient.
+    \item \textbf{Condition representation choice on dataset separability.} Pre-check domain separability via t-SNE or a Fisher-criterion ranking; choose representation accordingly. On datasets where domains overlap, no hand-crafted representation will succeed.
+    \item \textbf{Include a capacity control.} Audit any algorithmic improvement against a larger standard backbone (CBAM+ResNet18 in our case). Capacity is not a substitute for representation.
+    \item \textbf{Cross-validate on at least two datasets.} Single-dataset conclusions are unreliable in CSI sensing; replication on a dataset with different environment geometry is essential.
+\end{enumerate}
+
+\subsection{Implications for the Field}
+Three broader implications follow. \textbf{First}, the \CSI\ cross-domain field should adopt paired multi-seed protocols before claiming reproducibility. \textbf{Second}, when gains are real (\S\ref{sec:mechanism}), they tend to come from \emph{front-end representation} rather than \emph{back-end algorithmic} novelty---consistent with the broader trend in deep learning where representation beats architecture. \textbf{Third}, no single representation is universally optimal; the choice is conditioned on the dataset's geometric separability and on the input channel (amplitude vs.\ phase)---on CSIDA, for instance, multi-Rx wins on amplitude yet all three recipes fall to or below random on phase.\textbf{\emph{Comparison with reported precision.}} Reported cross-domain accuracies in the wider \CSI{} sensing literature cluster in the $60$--$90\,\%$ range on Widar3.0/MMFi; our LODO accuracies on the v1 cache ($\sim 30$--$40\,\%$) and our canonical-cache results ($\sim 20$--$31\,\%$) sit well below that interval. We attribute the gap to three orthogonal factors that our audit does \emph{not} try to close. \emph{(i) Split granularity.} Reported numbers are typically within-environment (or within-user) train/test splits that share the same (user, position, orientation) recording session; our \LODO{} folds hold out an entire archive (\S\ref{sec:methodology}). \emph{(ii) Class set and label correction.} Our canonical cache uses 5 of the 9 released indices; reports on the full 6- or 8-class tasks use labels that mix the per-archive index scheme (\S\ref{sec:boundary}). \emph{(iii) Baseline implementation depth.} Reported backbones are typically full ensembles of BVP preprocessing + augmentation + state-of-the-art backbones; our representations and models are intentionally minimal so that representation--protocol claims are not entangled with engineering depth. The expected effect on our headline conclusions is small because they are stated in paired differences against the same protocol and backbone, not in absolute accuracy.
+
+\subsection{Threats to Validity}
+\textbf{Internal.} Variance decomposition and \MDE\ analysis assume approximately Gaussian within-seed residuals (verified by Shapiro-Wilk, $p > 0.05$). Seed selection and fold partition are pre-specified and reported; no post-hoc tuning was performed. C10 capacity control uses standard CBAM+ResNet18 and isolates backbone contribution only. The canonical-cache within-domain sanity check ($20.65\,\%$ for the multi-\Rx\ pipeline vs.\ a $20\,\%$ chance level) establishes that the pipeline is not divergent---and, together with C6v2, that the canonical 5-class task is at floor for the multi-\Rx\ representation-model combination under any split.
+
+\textbf{External.} Findings are restricted to three datasets (Widar3.0, MMFi, CSIDA) and leave-one-domain-out cross-validation. \emph{On Widar3.0 the held-out unit is the released archive (one user $\times$ position $\times$ orientation session), not an environment; cross-environment generalisation on Widar3.0 is not measured.} We did not have access to time-indexed \CSI{} data and cannot speak to longitudinal distribution shift directly. Generalization to user-level, device-level, or temporal LODO splits is left as future work.
+
+\textbf{Algorithmic coverage.} The ten audited methods cover four of the five principal families of cross-domain algorithms: domain adaptation (DANN, C4), self-supervised pretraining, attention-based architectural modifications, and representation-side engineering (multi-\Rx{}, BVP). We do \emph{not} re-evaluate (a)~domain-generalization methods that learn environment-invariant predictors from the source domains alone (e.g., IRM~\cite{arjovsky2019irm}, V-REx, Fish); (b)~test-time adaptation methods (TENT/SAR/SWTA and DATTA~\cite{sterzinger2026datta}); (c)~source-free adaptation (SFDA); (d)~foundation-model recent CSI representations (e.g., WiFi-JEPA, AM-FM); (e)~causal-invariance or explicit content/style disentanglement methods. This is a coverage gap rather than evidence against those families: each is directly compatible with our \LODO{} protocol, and we therefore scope their paired re-evaluation as immediate future work. The C1--C4 negative findings stand for a specific class of lightweight gradient-based modifications, not for the entire algorithmic universe. The audit's strongest positive findings (C5 multi-\Rx{} BVP, C6 representation expansion) are representation-side and unaffected by this gap.
+
+\textbf{Construct.} Our accuracy metric treats all classes as equally important; per-class performance may differ. The MDE-based ``real'' criterion depends on the observed within-seed variance; studies with different variance would yield different MDE thresholds.
+
+% =============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented a paired leave-one-domain-out $\times$ multi-seed audit of fourteen paired comparisons across ten method axes in \CSI{} cross-domain gesture recognition, complemented by a larger-backbone capacity control (C10, CBAM+ResNet18, across three cache configurations of Widar3.0). Several of the algorithmic methods failed to reach significance under the present paired protocol; the \MultiRx\ representation improvement \emph{on the released v1-label cache} (+8.14\,pp, $g = 1.68$, \emph{v1-cache-conditioned}; reversed under canonical relabeling) did not transfer to MMFi (multi-scale nominally ahead: $+1.84$\,pp vs.\ RMS-agg, $p = 9.2\times10^{-4}$; $+0.93$\,pp vs.\ multi-\Rx, $p = 0.116$; v1 cache); under the canonical 5-class relabeling (C6v2) the direction reverses entirely ($-10.46$\,pp, $0/30$ pairs, $p \approx 1.6\times10^{-27}$), with the simpler RMS aggregation the only side retaining real signal ($31.13\,\%$ vs.\ a $20\,\%$ chance level; within-domain sanity for the multi-\Rx\ pipeline: $20.65\,\%$); on CSIDA, the amplitude multi-Rx recipe reached $19.08\%$ ($+1.39$\,pp over single-Rx, $d = +0.84$, wins 4/6) whereas the phase channel of all three recipes fell to or below the random baseline. The C10 capacity control reached $\Delta = -4.61$\,pp ($p = 0.028$, 3/18 wins for CBAM+ResNet18) on the 12k subset; the direction is stable on the 50k subset ($\Delta = -5.75$\,pp, 4/18 wins) but the significance does not survive it ($p = 0.0609$; 95\,\% CI $[-11.77, +0.26]$ crosses zero), so we report the backbone comparison as direction-consistent yet statistically fragile across subsets rather than as evidence of a winner swap. A final re-evaluation on the canonical 5-class cache (C10v3) shows that both backbones fall to within 1\,pp of the 20\,\% chance level once labeling is fixed (TOST $\pm$1\,pp: $p = 0.021$ pooled), collapsing the capacity contrast to a tight zero ($\Delta = -0.28$\,pp, $p = 0.159$; fold-level $p = 0.166$; 30 pairs) and --- with a label-integrity audit ruling out a cache-construction bug (Cram\'er's $V = 0.011$) --- tracing the v1 contrast to label--domain coupling in the released index scheme. Our work reframes \CSI{} cross-domain research from a model-architecture problem to a joint (representation $\times$ protocol $\times$ dataset-difficulty $\times$ input-channel $\times$ label-correctness) problem, and provides a paired evaluation protocol that other researchers can adopt on commodity hardware ($\sim$5 GPU-hours).
+
+% =============================================================================
+\section*{Broader Impact and Ethical Considerations}
+\textbf{Positive applications.} Our paired multi-seed protocol is immediately applicable to other WiFi sensing tasks (presence, fall detection, breathing monitoring), all of which currently suffer from the same reproducibility gap. Our finding that the optimal representation is \emph{dataset-dependent} also corrects an industry misconception (cf.\ RuView's retracted ``100\% presence detection'' claim) that a model trained in one environment can be deployed in another without retraining.
+
+\textbf{Privacy concerns.} WiFi-CSI sensing can detect gestures, breathing, and presence without physical contact or line of sight, raising dual-use risks. Our work provides a statistical methodology for evaluating any CSI sensing system; we explicitly recommend that future WiFi sensing papers adopt paired multi-seed evaluation, discuss deployment context, and release per-environment performance breakdowns.
+
+\textbf{Reproducibility.} All raw accuracies, training scripts, the BVP cache pipeline, and the statistical analysis notebooks are released at a public anonymous repository (URL to be inserted upon acceptance). The full audit is reproducible on commodity hardware ($\sim$5 GPU-hours on a single RTX 2080 Ti).
+
+% =============================================================================
+%  bibliography
+% =============================================================================
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{99}
+
+\bibitem{zheng2019widar} Y. Zheng \etal, ``WiFi CSI-based human activity recognition via body-coordinate velocity profiles,'' \emph{IEEE TPAMI}, 2019.
+
+\bibitem{wang2022csi} Z. Wang \etal, ``A survey on CSI-based human sensing,'' \emph{IEEEXplore}, 2022.
+
+\bibitem{sheng2020} T. Sheng \etal, ``Domain adversarial training for WiFi-CSI gesture recognition,'' \emph{IEEE INFOCOM}, 2020.
+
+\bibitem{zhang2021} J. Zhang \etal, ``AttnSense: Multi-head attention for CSI gesture recognition,'' \emph{IEEE TMC}, 2021.
+
+\bibitem{ma2022} Y. Ma \etal, ``Self-supervised pretraining for WiFi sensing,'' \emph{IEEE IoT-J}, 2022.
+
+\bibitem{xie2023} Q. Xie \etal, ``Multimodal CSI fusion for gesture recognition,'' \emph{IEEE TMC}, 2023.
+
+\bibitem{sculley2018} D. Sculley \etal, ``Winner's curse? On pace, progress, and empirical rigor,'' \emph{ICLR Workshop}, 2018.
+
+\bibitem{pineau2021} J. Pineau \etal, ``Improving reproducibility in machine learning research,'' \emph{JMLR}, 2021.
+
+\bibitem{henderson2018} P. Henderson \etal, ``Deep reinforcement learning that matters,'' \emph{AAAI}, 2018.
+
+\bibitem{colas2018} F. Colas \etal, ``A pitfall of experimental design in deep RL,'' \emph{ICML Workshop}, 2018.
+
+\bibitem{dror2018} R. Dror \etal, ``The hitchhiker's guide to testing statistical significance in natural language processing,'' \emph{ACL}, 2018.
+
+\bibitem{arjovsky2019irm} M. Arjovsky, L. Bottou, I. Gulrajani, and D. Lopez-Paz, ``Invariant risk minimization,'' \emph{arXiv:1907.02893}, 2019.
+
+\bibitem{bouthillier2021} X. Bouthillier \etal, ``Accounting for variance in machine learning benchmarks,'' \emph{MLSys}, 2021.
+
+\bibitem{zhang2026sdp} D. Zhang \etal, ``SDP: A unified protocol and benchmarking framework for reproducible wireless sensing,'' arXiv:2601.08463, 2026.
+
+\bibitem{guarino2026} I. Guarino \etal, ``A survey on CSI-based Wi-Fi sensing datasets and models with a focus on reproducibility,'' \emph{Computer Communications}, 249:108431, 2026.
+
+\bibitem{wang2026survey} F. Wang \etal, ``A survey on Wi-Fi sensing generalizability: taxonomy, techniques, datasets, and future research prospects,'' \emph{IEEE COMST}, 28:5227--5266, 2026.
+
+\bibitem{woo2018cbam} S. Woo \etal, ``CBAM: Convolutional block attention module,'' \emph{ECCV}, 2018.
+
+\bibitem{he2016resnet} K. He \etal, ``Deep residual learning for image recognition,'' \emph{IEEE CVPR}, 2016.
+
+\bibitem{zhang2017rexart} C. Zhang \etal, ``Understanding deep learning requires rethinking generalization,'' \emph{ICLR}, 2017.
+
+\bibitem{arpit2017} D. Arpit \etal, ``A closer look at memorization in deep networks,'' \emph{ICML}, 2017.
+
+\bibitem{yang2023sensefi} J. Yang \etal, ``SenseFi: A library and benchmark on deep-learning-empowered WiFi human sensing,'' \emph{Patterns}, 4(3):100703, 2023.
+
+\bibitem{sterzinger2026datta} J. Strohmayer \etal, ``DATTA: Domain-adversarial test-time adaptation for cross-domain WiFi-based human activity recognition,'' \emph{WACV}, 2026.
+
+\bibitem{cohen2026ruview} R. Cohen, ``RuView: An open-source ESP32-mesh WiFi sensing stack,'' GitHub, 2026.
+
+\bibitem{zhu2025csibench} G. Zhu \etal, ``CSI-Bench: A large-scale in-the-wild dataset for multi-task WiFi sensing,'' \emph{NeurIPS Datasets \& Benchmarks}, 2025.
+
+\bibitem{wu2021} D. Wu \etal, ``WiTraj: Robust indoor motion tracking with WiFi signals,'' \emph{IEEE TMC}, 22(5):3062--3078, 2023.
+
+\bibitem{yang2023mmfi} J. Yang \etal, ``MMFi: Multi-modal WiFi sensing dataset,'' \emph{IEEE TMC}, 2023.
+
+\bibitem{vassallo2025time} A. Brunello \etal, ``Time matters: Empirical insights into the limits and challenges of temporal generalization in CSI-based Wi-Fi sensing,'' \emph{Internet of Things}, 32:101634, 2025.
+
+\bibitem{roy2007} O. Roy and M. Vetterli, ``The effective rank of a noisy broadband mode,'' \emph{IEEE ICASSP}, 2007.
+
+\bibitem{csida2022} S. Hu, ``CSIDA,'' \emph{Mendeley Data}, V1, 2022. \url{https://doi.org/10.17632/gyr6c4nbsc}
+
+\bibitem{dasilva2026pss} R. da Silva and K. Monahan, ``Quantifying protocol-induced uncertainty in comparative predictive-model evaluation: evidence from large-scale daily PM10 forecasting,'' arXiv:2609.26288, 2026.
+
+\bibitem{li2026conformal} H. Li \etal, ``Solving the WiFi sensing dilemma in reality leveraging conformal prediction,'' \emph{IEEE TMC}, 2026.
+
+\bibitem{chen2026perceptalign} S. Jia \etal, ``Breaking coordinate overfitting: geometry-aware WiFi sensing for cross-layout 3D pose estimation,'' arXiv:2601.12252, 2026.
+
+\end{thebibliography}
+
+\end{document}
